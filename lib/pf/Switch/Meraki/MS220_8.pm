@@ -31,6 +31,8 @@ use base ('pf::Switch::Meraki');
 
 use pf::constants;
 use pf::util;
+use pf::node;
+use pf::util::radius qw(perform_coa);
 
 =head1 SUBROUTINES
 
@@ -80,6 +82,137 @@ sub parseRequest {
     }
     return ($nas_port_type, $eap_type, $client_mac, $port, $user_name, $nas_port_id, $session_id, $nas_port_id);
 }
+
+=item deauthTechniques
+
+Return the reference to the deauth technique or the default deauth technique.
+
+=cut
+
+sub deauthTechniques {
+    my ($self, $method) = @_;
+    my $logger = $self->logger;
+    my $default = $SNMP::RADIUS;
+    my %tech = (
+        $SNMP::RADIUS => 'deauthenticateMacRadius',
+    );
+
+    if (!defined($method) || !defined($tech{$method})) {
+        $method = $default;
+    }
+    return $method,$tech{$method};
+}
+
+=item deauthenticateMacDefault
+
+De-authenticate a MAC address from wireless network (including 802.1x).
+
+New implementation using RADIUS Disconnect-Request.
+
+=cut
+
+sub deauthenticateMacRadius {
+    my ( $self, $mac, $is_dot1x ) = @_;
+    my $logger = $self->logger;
+
+    if ( !$self->isProductionMode() ) {
+        $logger->info("not in production mode... we won't perform deauthentication");
+        return 1;
+    }
+
+    $logger->debug("deauthenticate $mac using RADIUS Disconnect-Request deauth method");
+    return $self->radiusDisconnect($mac);
+}
+
+=head2 radiusDisconnect
+
+Tailored made disconnect message for Meraki APs
+
+=cut
+
+sub radiusDisconnect {
+    my ($self, $mac, $add_attributes_ref) = @_;
+    my $logger = $self->logger;
+
+    # initialize
+    $add_attributes_ref = {} if (!defined($add_attributes_ref));
+
+    if (!defined($self->{'_radiusSecret'})) {
+        $logger->warn(
+            "Unable to perform RADIUS CoA-Request on (".$self->{'_id'}."): RADIUS Shared Secret not configured"
+        );
+        return;
+    }
+
+    $logger->info("deauthenticating");
+
+    # Where should we send the RADIUS CoA-Request?
+    # to network device by default
+    my $send_disconnect_to = $self->{'_ip'};
+    # but if controllerIp is set, we send there
+    if (defined($self->{'_controllerIp'}) && $self->{'_controllerIp'} ne '') {
+        $logger->info("controllerIp is set, we will use controller $self->{_controllerIp} to perform deauth");
+        $send_disconnect_to = $self->{'_controllerIp'};
+    }
+    # On which port we have to send the CoA-Request ?
+    my $nas_port = $self->{'_disconnectPort'} || '3799';
+    # allowing client code to override where we connect with NAS-IP-Address
+    $send_disconnect_to = $add_attributes_ref->{'NAS-IP-Address'}
+        if (defined($add_attributes_ref->{'NAS-IP-Address'}));
+
+    my $response;
+    try {
+        my $connection_info = {
+            nas_ip => $send_disconnect_to,
+            secret => $self->{'_radiusSecret'},
+            LocalAddr => $self->deauth_source_ip($send_disconnect_to),
+            nas_port => $nas_port,
+        };
+        my $node_info = node_view($mac);
+        # transforming MAC to the expected format 00-11-22-33-CA-FE
+        $mac = uc($mac);
+        $mac =~ s/:/-/g;
+        # Standard Attributes
+
+        my $attributes_ref = {
+            'Calling-Station-Id' => $mac,
+        };
+
+        # merging additional attributes provided by caller to the standard attributes
+        $attributes_ref = { %$attributes_ref, %$add_attributes_ref };
+
+        my $vsa = [
+            {
+            vendor => "Cisco",
+            attribute => "Cisco-AVPair",
+            value => "audit-session-id=$node_info->{'sessionid'}",
+            },
+            {
+            vendor => "Cisco",
+            attribute => "Cisco-AVPair",
+            value => "subscriber:command=reauthenticate",
+            },
+        ];
+        # This attribute is unsupported on the Meraki so we make sure we don't send it
+        delete $attributes_ref->{'Service-Type'};
+        $response = perform_coa($connection_info, $attributes_ref, $vsa);
+    } catch {
+        chomp;
+        $logger->warn("Unable to perform RADIUS CoA-Request on (".$self->{'_id'}."): $_");
+        $logger->error("Wrong RADIUS secret or unreachable network device (".$self->{'_id'}.")...") if ($_ =~ /^Timeout/);
+    };
+    return if (!defined($response));
+
+    return $TRUE if ( ($response->{'Code'} eq 'Disconnect-ACK') || ($response->{'Code'} eq 'CoA-ACK') );
+
+    $logger->warn(
+        "Unable to perform RADIUS Disconnect-Request on (".$self->{'_id'}.")."
+        . ( defined($response->{'Code'}) ? " $response->{'Code'}" : 'no RADIUS code' ) . ' received'
+        . ( defined($response->{'Error-Cause'}) ? " with Error-Cause: $response->{'Error-Cause'}." : '' )
+    );
+    return;
+}
+
 
 =head1 AUTHOR
 
