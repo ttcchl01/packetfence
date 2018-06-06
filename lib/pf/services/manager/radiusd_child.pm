@@ -279,7 +279,7 @@ EOT
         $tags{'socket_file'} = "$var_dir/run/radiusd-eduroam.sock";
         parse_template( \%tags, $tags{template}, "$install_dir/raddb/eduroam.conf" );
 
-       # Eduroam configuration
+        # Eduroam configuration
         %tags = ();
         $tags{'template'} = "$conf_dir/raddb/sites-available/eduroam";
         $tags{'local_realm'} = '';
@@ -447,8 +447,7 @@ sub generate_radiusd_proxy {
     $tags{'install_dir'} = $install_dir;
     $tags{'config'} = '';
     $tags{'radius_sources'} = '';
-    my @radius_auth_sources;
-    my @radius_acct_sources;
+    my @radius_sources;
 
     foreach my $realm ( sort keys %pf::config::ConfigRealm ) {
         my $options = $pf::config::ConfigRealm{$realm}->{'options'} || '';
@@ -466,19 +465,21 @@ EOT
 acct_pool = acct_pool_$realm
 EOT
         }
-        $tags{'config'} .= <<"EOT";
+        if($pf::config::ConfigRealm{$realm}->{'radius_auth'} || $pf::config::ConfigRealm{$realm}->{'radius_acct'}) {
+            $tags{'config'} .= <<"EOT";
 }
 EOT
+        }
         if ($pf::config::ConfigRealm{$realm}->{'radius_auth'} ) {
             $tags{'config'} .= <<"EOT";
 home_server_pool auth_pool_$realm {
 type = $pf::config::ConfigRealm{$realm}->{'radius_auth_proxy_type'}
 EOT
-            push(@radius_auth_sources, split(',',$pf::config::ConfigRealm{$realm}->{'radius_auth'}));
+            push(@radius_sources, split(',',$pf::config::ConfigRealm{$realm}->{'radius_auth'}));
             foreach my $radius (split(',',$pf::config::ConfigRealm{$realm}->{'radius_auth'})) {
 
                 $tags{'config'} .= <<"EOT";
-home_server = auth_$radius
+home_server = $radius
 EOT
             }
             $tags{'config'} .= <<"EOT";
@@ -490,11 +491,11 @@ EOT
 home_server_pool acct_pool_$realm {
 type = $pf::config::ConfigRealm{$realm}->{'radius_acct_proxy_type'}
 EOT
-            push(@radius_acct_sources,split(',',$pf::config::ConfigRealm{$realm}->{'radius_acct'}));
+            push(@radius_sources,split(',',$pf::config::ConfigRealm{$realm}->{'radius_acct'}));
             foreach my $radius (split(',',$pf::config::ConfigRealm{$realm}->{'radius_acct'})) {
 
                 $tags{'config'} .= <<"EOT";
-home_server = acct_$radius
+home_server = $radius
 EOT
             }
             $tags{'config'} .= <<"EOT";
@@ -507,29 +508,16 @@ EOT
 EOT
         }
     }
-    foreach my $radius (uniq @radius_auth_sources) {
+    foreach my $radius (uniq @radius_sources) {
                 my $source = pf::authentication::getAuthenticationSource($radius);
                 $tags{'radius_sources'} .= <<"EOT";
 
-home_server auth_$radius {
+home_server $radius {
 ipaddr = $source->{'host'}
 port = $source->{'port'}
 secret = $source->{'secret'}
 $source->{'options'}
 }
-EOT
-    }
-    foreach my $radius (uniq @radius_acct_sources) {
-                my $source = pf::authentication::getAuthenticationSource($radius);
-                $tags{'radius_sources'} .= <<"EOT";
-
-home_server acct_$radius {
-ipaddr = $source->{'host'}
-port = $source->{'port'}
-secret = $source->{'secret'}
-$source->{'options'}
-}
-
 EOT
     }
     # Eduroam configuration
