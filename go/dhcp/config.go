@@ -29,6 +29,7 @@ type DHCPHandler struct {
 	layer2        bool
 	role          string
 	ipReserved    string
+	ipAssigned    map[string]uint32
 }
 
 type Interfaces struct {
@@ -225,6 +226,7 @@ func (d *Interfaces) readConfig() {
 
 							initiaLease(&DHCPScope)
 							ExcludeIP(&DHCPScope, ConfNet.IpReserved)
+							DHCPScope.ipAssigned = AssignIP(&DHCPScope, ConfNet.IpAssigned)
 							DHCPScope.ipReserved = ConfNet.IpReserved
 							var options = make(map[dhcp.OptionCode][]byte)
 
@@ -286,6 +288,7 @@ func (d *Interfaces) readConfig() {
 
 						initiaLease(&DHCPScope)
 						ExcludeIP(&DHCPScope, ConfNet.IpReserved)
+						DHCPScope.ipAssigned = AssignIP(&DHCPScope, ConfNet.IpAssigned)
 						DHCPScope.ipReserved = ConfNet.IpReserved
 
 						var options = make(map[dhcp.OptionCode][]byte)
