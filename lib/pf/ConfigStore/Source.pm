@@ -117,6 +117,9 @@ sub cleanupAfterRead {
             $item->{message} = $self->join_options($item->{message});
         }
     }
+    if ($item->{type} eq 'AD' || $item->{type} eq "LDAP") {
+        $self->expand_list($item, qw(searchattributes));
+    }
     $self->expand_list($item, qw(realms));
 }
 
@@ -128,6 +131,10 @@ sub cleanupBeforeCommit {
     if ($item->{type} eq 'Eduroam') {
         $self->flatten_list($item, qw(local_realm reject_realm));
     }
+    if ($item->{type} eq 'AD' || $item->{type} eq "LDAP") {
+        $self->flatten_list($item, qw(searchattributes));
+    }
+
     $self->flatten_list($item, qw(realms));
 }
 
