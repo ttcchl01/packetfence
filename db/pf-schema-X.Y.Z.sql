@@ -668,6 +668,8 @@ CREATE PROCEDURE acct_start (
     IN p_framedprotocol varchar(32),
     IN p_framedipaddress varchar(15),
     IN p_acctstatustype varchar(25),
+    IN p_nasidentifier varchar(64),
+    IN p_calledstationssid varchar(64),
     IN p_tenant_id int
 )
 BEGIN
@@ -688,18 +690,19 @@ IF (Previous_Session_Time IS NOT NULL) THEN
       AND (acctstoptime IS NULL OR acctstoptime = 0);
 END IF;
 
-INSERT INTO radacct 
+INSERT INTO radacct
            (
-            acctsessionid,      acctuniqueid,       username, 
-            realm,          nasipaddress,       nasportid, 
-            nasporttype,        acctstarttime,      acctupdatetime, 
-            acctstoptime,       acctsessiontime,    acctauthentic, 
-            connectinfo_start,  connectinfo_stop,   acctinputoctets, 
-            acctoutputoctets,   calledstationid,    callingstationid, 
-            acctterminatecause, servicetype,        framedprotocol, 
-            framedipaddress, tenant_id
-           ) 
-VALUES 
+            acctsessionid,      acctuniqueid,       username,
+            realm,              nasipaddress,       nasportid,
+            nasporttype,        acctstarttime,      acctupdatetime,
+            acctstoptime,       acctsessiontime,    acctauthentic,
+            connectinfo_start,  connectinfo_stop,   acctinputoctets,
+            acctoutputoctets,   calledstationid,    callingstationid,
+            acctterminatecause, servicetype,        framedprotocol,
+            framedipaddress,    nasidentifier,      calledstationssid,
+            tenant_id
+           )
+VALUES
     (
     p_acctsessionid, p_acctuniqueid, p_username,
     p_realm, p_nasipaddress, p_nasportid,
@@ -708,8 +711,10 @@ VALUES
     p_connectinfo_start, p_connectinfo_stop, p_acctinputoctets,
     p_acctoutputoctets, p_calledstationid, p_callingstationid,
     p_acctterminatecause, p_servicetype, p_framedprotocol,
-    p_framedipaddress, p_tenant_id
+    p_framedipaddress, p_nasidentifier, p_calledstationssid,
+    p_tenant_id
     );
+
 
 
   INSERT INTO radacct_log
@@ -746,6 +751,8 @@ CREATE PROCEDURE acct_stop (
   IN p_framedprotocol varchar(32),
   IN p_acctterminatecause varchar(12),
   IN p_acctstatustype varchar(25),
+  IN p_nasidentifier varchar(64),
+  IN p_calledstationssid varchar(64),
   IN p_tenant_id int
 )
 BEGIN
@@ -766,29 +773,31 @@ BEGIN
     SET Previous_Input_Octets = 0;
     SET Previous_Output_Octets = 0;
     # If there is no open session for this, open one.
-    INSERT INTO radacct 
+    INSERT INTO radacct
            (
-            acctsessionid,      acctuniqueid,       username, 
-            realm,              nasipaddress,       nasportid, 
+            acctsessionid,      acctuniqueid,       username,
+            realm,              nasipaddress,       nasportid,
             nasporttype,        acctstoptime,       acctstarttime,
-            acctsessiontime,    acctauthentic, 
-            connectinfo_stop,  acctinputoctets, 
-            acctoutputoctets,   calledstationid,    callingstationid, 
+            acctsessiontime,    acctauthentic,
+            connectinfo_stop,   acctinputoctets,
+            acctoutputoctets,   calledstationid,    callingstationid,
             servicetype,        framedprotocol,     acctterminatecause,
-            framedipaddress,    tenant_id
-           ) 
-    VALUES 
+            framedipaddress,    nasidentifier,      calledstationssid,
+            tenant_id
+           )
+    VALUES
         (
             p_acctsessionid,        p_acctuniqueid,     p_username,
             p_realm,                p_nasipaddress,     p_nasportid,
-            p_nasporttype,          p_timestamp,     date_sub(p_timestamp, INTERVAL p_acctsessiontime SECOND ), 
+            p_nasporttype,          p_timestamp,     date_sub(p_timestamp, INTERVAL p_acctsessiontime SECOND ),
             p_acctsessiontime,      p_acctauthentic,
             p_connectinfo_stop,     p_acctinputoctets,
             p_acctoutputoctets,     p_calledstationid,  p_callingstationid,
             p_servicetype,          p_framedprotocol,   p_acctterminatecause,
-            p_framedipaddress,      p_tenant_id
+            p_framedipaddress,      p_nasidentifier, p_calledstationssid,
+            p_tenant_id
         );
-  ELSE 
+  ELSE
     # Update record with new traffic
     UPDATE radacct SET
       acctstoptime = p_timestamp,
@@ -800,6 +809,7 @@ BEGIN
       WHERE acctuniqueid = p_acctuniqueid
       AND (acctstoptime IS NULL OR acctstoptime = 0);
   END IF;
+
 
   # Create new record in the log table
   INSERT INTO radacct_log
@@ -836,6 +846,8 @@ CREATE PROCEDURE acct_update(
   IN p_servicetype varchar(32),
   IN p_framedprotocol varchar(32),
   IN p_acctstatustype varchar(25),
+  IN p_nasidentifier varchar(64),
+  IN p_calledstationssid varchar(64),
   IN p_tenant_id int
 )
 BEGIN
@@ -862,8 +874,6 @@ BEGIN
         AND acctstarttime < Latest_acctstarttime
         AND (acctstoptime IS NULL OR acctstoptime = 0);
   END IF;
-
-
   # Detect if we receive in the same time a stop before the interim update
   SELECT COUNT(*)
   INTO cnt
@@ -887,7 +897,7 @@ BEGIN
   SELECT count(callingstationid), acctinputoctets, acctoutputoctets, acctsessiontime, acctupdatetime
     INTO countmac, Previous_Input_Octets, Previous_Output_Octets, Previous_Session_Time, Previous_AcctUpdate_Time
     FROM radacct
-    WHERE (acctuniqueid = p_acctuniqueid) 
+    WHERE (acctuniqueid = p_acctuniqueid)
     AND (acctstoptime IS NULL OR acctstoptime = 0) LIMIT 1;
 
   IF (countmac = 1) THEN
@@ -899,7 +909,7 @@ BEGIN
         acctoutputoctets = p_acctoutputoctets,
         acctupdatetime = p_timestamp,
         acctinterval = timestampdiff( second, Previous_AcctUpdate_Time,  p_timestamp  )
-    WHERE acctuniqueid = p_acctuniqueid 
+    WHERE acctuniqueid = p_acctuniqueid
     AND (acctstoptime IS NULL OR acctstoptime = 0);
   ELSE
     IF (cnt = 0) THEN
@@ -918,7 +928,8 @@ BEGIN
               connectinfo_start,acctinputoctets,
               acctoutputoctets,calledstationid,callingstationid,
               servicetype,framedprotocol,
-              framedipaddress, tenant_id
+              framedipaddress, nasidentifier,
+              calledstationssid, tenant_id
              )
       VALUES
           (
@@ -929,12 +940,11 @@ BEGIN
               p_connectinfo_start,p_acctinputoctets,
               p_acctoutputoctets,p_calledstationid,p_callingstationid,
               p_servicetype,p_framedprotocol,
-              p_framedipaddress, p_tenant_id
+              p_framedipaddress, p_nasidentifier, p_calledstationssid, p_tenant_id
           );
      END IF;
    END IF;
 
- 
   # Create new record in the log table
   INSERT INTO radacct_log
    (acctsessionid, username, nasipaddress,
