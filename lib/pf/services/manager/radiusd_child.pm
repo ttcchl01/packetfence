@@ -484,7 +484,7 @@ sub generate_radiusd_ldap {
    foreach my $ldap (keys %ConfigAuthenticationLdap) {
       my $searchattributes;
       foreach my $searchattribute (@{$ConfigAuthenticationLdap{$ldap}->{searchattributes}}) {
-          $searchattributes .= '('.$searchattribute.'=%{ldapquote:&User-Name})';
+          $searchattributes .= '('.$searchattribute.'=%{User-Name})';
       }
 
       $tags{'servers'} .= <<"EOT";
@@ -495,7 +495,7 @@ ldap $ldap {
     identity        = "$ConfigAuthenticationLdap{$ldap}->{binddn}"
     password        = "$ConfigAuthenticationLdap{$ldap}->{password}"
     base_dn         = "$ConfigAuthenticationLdap{$ldap}->{basedn}"
-    filter          = "(userPrincipalName=%{ldapquote:&User-Name})"
+    filter          = "(userPrincipalName=%{User-Name})"
     scope           = $ConfigAuthenticationLdap{$ldap}->{scope}
     base_filter     = "(objectclass=user)"
     rebind          = yes
