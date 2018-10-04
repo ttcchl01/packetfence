@@ -1,1 +1,160 @@
-Success Chrome OS!
+<!--Body container that sets layout and inner content-->
+
+    <a name="top"></a>
+    
+	<body>
+		<div id="wrapper">
+			<div id="content" class="auth ">
+				<div id="inner-content">
+                
+<!--Top navigation menu bar-->
+                
+                 	<nav>
+                        <ul id="nav">
+                            <li><a href="/ssl_inspection/ios">iOS</a></li>
+                            
+                            <li><a href="/ssl_inspection/android">Android</a></li>
+                            
+                            <li><a href="/ssl_inspection/osx">Mac OSX</a></li>
+                            
+                            <li><a href="/ssl_inspection/windows">Windows</a></li>
+                            
+                            <li><a class="here" href="/ssl_inspection/chrome">Chrome OS</a></li>
+                            
+                            <li><a href="/ssl_inspection/firefox">Firefox</a></li>
+                            
+                            <li><a href="/ssl_inspection/opera">Opera</a></li>
+                            
+                            <li><a href="/ssl_inspection/unsupported">Unsupported</a></li> 
+                        </ul>
+                    </nav>
+                    
+                    <br />
+                    
+               	    <hr />
+						
+                    <div id="guide">
+						<p>
+							This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.
+						</p>
+					
+						<p>
+                        	<strong>
+								This guide will help you install the SSL filtering certificate for Chrome OS and Chrome for Linux — this also includes Chrome-based browsers which do not use the operating system's built-in key store.
+							</strong>
+						</p>
+
+						<h3 class="number"><span>Step </span>1</h3>
+
+						<p>
+							First, click the <i>Download Certificate</i> button below; this will download the certificate file to your computer.
+						</p>
+
+						<div class="buttons">
+							<p>
+                    			<a href="WebbCity-Edge.cer" id="download-button" class="btn buttons">Download Certificate</a>
+                			</p>
+						</div>
+
+						<h3 class="number"><span>Step </span>2</h3>
+
+						<div class="guide-image">
+							<div><div>
+								<img src="./style/img/portal-ssl-guides/chrome-01-download.png" alt="Chrome download bar" width="550" height="260">
+							</div></div>
+						</div>
+
+						<p>
+							Depending on your configuration, you may be prompted to save the certificate. If so, select a folder to save the file in, and then click <i>Save</i>. (In Chrome OS and some other configurations, the file may simply download immediately.) When the download has finished, the icon will flash in the download bar at the bottom of the screen50
+                        </p>
+
+						<p>
+							(Note: These images show Chrome running on Chrome OS version 47; you may not see exactly the same thing if you are using Chrome for Linux; however, the general process and wording should be the same.)
+						</p>
+
+						<h3 class="number"><span>Step </span>3</h3>
+
+						<div class="guide-image">
+							<div><div>
+								<img src="/style/img/portal-ssl-guides/chrome-02-settings.png" alt="Chrome Settings menu option">
+							</div></div>
+						</div>
+
+						<p>
+							Do not double-click the file after the download has finished; instead, click the Chrome menu (usually appearing as three horizontal lines) in the top right corner. Then, click the <i>Settings</i> option.
+						</p>
+
+						<h3 class="number"><span>Step </span>4</h3>
+
+						<div class="guide-image">
+							<div><div>
+								<img src="./style/img/portal-ssl-guides/chrome-03-show-advanced-settings.png" alt="Chrome Settings page" width="524" height="563">
+							</div></div>
+						</div>
+
+						<p>
+							The Chrome Settings page will open in a new tab. If necessary, scroll all the way down to the bottom; then, click the <i>Show advanced settings</i> link.
+						</p>
+
+						<h3 class="number"><span>Step </span>5</h3>
+
+						<div class="guide-image">
+							<div><div>
+								<img src="./style/img/portal-ssl-guides/chrome-04-manage-certificates.png" alt="Chrome Settings page" width="524" height="563">
+							</div></div>
+						</div>
+
+						<p>
+							The Settings page will expand to reveal several new options. Scroll down nearly to the bottom and click the <i>Manage certificates...</i> button.
+						</p>
+
+						<h3 class="number"><span>Step </span>6</h3>
+
+						<div class="guide-image">
+							<div><div>
+								<img src="./style/img/portal-ssl-guides/chrome-05-import.png" alt="Chrome certificate manager" width="560" height="400">
+							</div></div>
+						</div>
+
+						<p>
+							When the <i>Certificate manager</i> screen appears, click the <i>Authorities</i> tab. Then, click the <i>Import...</i> button near the bottom.
+						</p>
+
+						<h3 class="number"><span>Step </span>7</h3>
+
+						<div class="guide-image">
+							<div><div>
+								<img src="./style/img/portal-ssl-guides/chrome-06-open.png" alt="Chrome file browser" width="550" height="380">
+							</div></div>
+						</div>
+
+						<p>
+							A file browser will appear, allowing you to select the certificate. Locate the certificate you downloaded previously (it may be in a folder called <i>Downloads</i>), and double-click to open it.
+						</p>
+
+						<h3 class="number"><span>Step </span>8</h3>
+
+						<div class="guide-image">
+							<div><div>
+								<img src="./style/img/portal-ssl-guides/chrome-07-trust.png" alt="Chrome certificate authority prompt">
+							</div></div>
+						</div>
+
+						<p>
+							A prompt will appear asking whether to trust the certificate authority. Select <i>Trust this certificate for identifying websites</i> and then click <i>OK</i>.
+						</p>
+
+						<h3 class="number"><span>Step </span>9</h3>
+
+						<p>
+							You're done! After trusting the CA, you can click OK, close the Settings page, and continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.
+						</p>
+					</div>
+                    
+                    <br />
+                    
+	<a href='#top'>Back to Top</a>
+                </div>
+			</div>
+		</div>
+	</body>

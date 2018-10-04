@@ -28,31 +28,22 @@ has_field 'skipable' =>
              help => 'Whether or not, this message can be skipped' },
   );
 
-#has_field 'message' =>
-#  (
-#   type => 'TextArea',
-#   label => 'Message',
-#   element_class => ['input-xxlarge'],
-#   required => 0,
-#   tags => { after_element => \&help,
-#             help => 'The message that will be displayed to the user. Use with caution as the HTML contained in this field will NOT be escaped.' },
-#  );
-
-has_field 'template' =>
+has_field 'ssl_path' =>
   (
    type => 'Text',
-   label => 'Template',
+   label => 'SSL Certificate URL',
+   required => 1,
    tags => { after_element => \&help,
-             help => 'The template to use to display the message' },
+             help => 'URL of the SSL certificate in X509 Base64 format.' },
   );
 
+
 sub child_definition {
-    return qw(template skipable);
+    return qw(ssl_path skipable);
 }
 
 sub BUILD {
     my ($self) = @_;
-    $self->field('template')->default($self->for_module->meta->find_attribute_by_name('template')->default->());
     $self->field('skipable')->default($self->for_module->meta->find_attribute_by_name('skipable')->default->());
 }
 

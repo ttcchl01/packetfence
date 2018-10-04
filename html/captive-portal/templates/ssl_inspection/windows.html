@@ -1,1 +1,192 @@
-Success Windows!
+<!--Body container that sets layout and inner content-->
+
+    <a name="top"></a>
+    
+	<body>
+		<div id="wrapper">
+			<div id="content" class="auth ">
+				<div id="inner-content">
+
+<!--Top navigation menu bar-->
+
+                	<nav>
+                        <ul id="nav">
+                       	    <li><a href="/ssl_inspection/ios">iOS</a></li>
+                            
+                            <li><a href="/ssl_inspection/android">Android</a></li>
+                            
+                            <li><a href="/ssl_inspection/osx">Mac OSX</a></li>
+                            
+                            <li><a class="here" href="/ssl_inspection/windows">Windows</a></li>
+                            
+                            <li><a href="/ssl_inspection/chrome">Chrome OS</a></li>
+                            
+                            <li><a href="/ssl_inspection/firefox">Firefox</a></li>
+                            
+                            <li><a href="/ssl_inspection/opera">Opera</a></li>
+                            
+                            <li><a href="/ssl_inspection/unsupported">Unsupported</a></li> 
+                        </ul>
+                    </nav>
+                    
+                    <br />
+                    
+                    <hr />
+                    
+                    <div id="guide">
+                        <p>
+                        	This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.
+						</p>
+
+                        <p>
+                        	<strong>
+                            	This guide will help you install the SSL filtering certificate for Windows-based browsers which use the operating system's built-in certificate store — this includes Internet Explorer, Chrome, and Safari.
+                        	</strong>
+						</p>
+                        
+                        <h3 class="number"><span>Step </span>1</h3>
+                        	<p>
+                            	First, click the <i>Download Certificate</i> button below; this will begin a download of the file to your computer.
+                        	</p>
+                        
+                        <div class="buttons">
+                            <p>
+                            	<a href="/common/certificate.crt" id="download-button" class="btn buttons">Download Certificate</a>
+                            </p>
+                        </div>
+                        
+                        <h3 class="number"><span>Step </span>2</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                                    <img src="./style/img/portal-ssl-guides/windows-01-open-or-save.png" alt="Windows save prompt" width="560" height="400" />
+                            </div></div>
+                        </div>
+                        
+                        <p>
+                            Depending on your browser and configuration, you will probably be asked whether you would like to open the file or save it; choose <i>Open</i>. Depending on your browser, you may then have to click <i>Open</i> a second time.
+                        </p>
+                        
+                        <p>
+                            (Note: These images show Internet Explorer 10 running on Windows 8; you may not see exactly the same thing if you are using another browser or a different version of Windows; however, the general process and wording should be the same.)
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>3</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                            	<img src="./style/img/portal-ssl-guides/windows-02-security-warning.png" alt="Windows security prompt" />
+                            </div></div>
+                        </div>
+                        
+                        <p>
+                            Depending on your browser and configuration, you may see a <i>Security Warning</i> which asks if you're sure you want to open the file; if so, click <i>Open</i> once more.
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>4</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                            	<img src="./style/img/portal-ssl-guides/windows-03-install-certificate.png" alt="Windows Certificate dialogue" />
+							</div></div>
+                        </div>
+                        
+                        <p>
+                            Next, you will be presented with a <i>Certificate</i> dialogue.
+                            Click the <i>Install Certificate...</i> button near the bottom of
+                            this window.
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>5</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                            	<img src="./style/img/portal-ssl-guides/windows-04-certificate-wizard.png" alt="Windows Certificate Import Wizard" />
+							</div></div>
+                        </div>
+                        
+                        <p>
+                            The <i>Certificate Import Wizard</i> will open next. Depending on your configuration, you may be asked whether to install for the <i>Current User</i> or the <i>Local Machine</i>; if asked, you should normally select <i>Local Machine</i>. In either case, click <i>Next</i>.
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>6</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                            	<img src="./style/img/portal-ssl-guides/windows-05-certificate-store.png" alt="Windows Certificate Import Wizard" />
+							</div></div>
+                        </div>
+                        
+                        <p>
+                            The next screen will ask whether you would like to have Windows <i>automatically select a certificate store</i> or you would like to select it yourself. Opt to select yourself, by clicking on <i>Place all certificates in the following store</i>. Then, press the <i>Browse</i> button to the right.
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>7</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                            	<img src="./style/img/portal-ssl-guides/windows-06-select-certificate-store.png" alt="Windows Select Certificate Store prompt" />
+                            </div></div>
+                        </div>
+                        
+                        <p>
+                            The <i>Select Certificate Store</i> dialogue will open. Highlight <i>Trusted Root Certification Authorities</i> in the list, and then press <i>OK</i> at the bottom.
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>8</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                            	<img src="./style/img/portal-ssl-guides/windows-07-place-all-certificates.png" alt="Windows Certificate Import Wizard" />
+							</div></div>
+                        </div>
+                        
+                        <p>
+                            Back at the main wizard screen, the <i>Certificate store</i> box should now show <i>Trusted Root Certification Authorities</i>. Press <i>Next</i> again.
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>9</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                            	<img src="./style/img/portal-ssl-guides/windows-08-completing-wizard.png" alt="Windows Certificate Import Wizard" />
+                            </div></div>
+                        </div>
+                        
+                        <p>
+                            At the <i>Completing the Certificate Import Wizard</i> screen, press the <i>Finish</i> button.
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>10</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                            	<img src="./style/img/portal-ssl-guides/windows-09-certificate-security-warning.png" alt="Windows Security Warning dialogue" />
+							</div></div>
+                        </div>
+                        
+                        <p>
+                            A <i>Security Warning</i> will appear, asking if you're sure you'd like to install the certificate. Click the <i>Yes</i> button.
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>11</h3>
+                        
+                        <div class="guide-image">
+                            <div><div>
+                                <img src="./style/img/portal-ssl-guides/windows-10-import-successful.png" alt="Windows Certificate Import Wizard" />
+                            </div></div>
+                        </div>
+                        
+                        <p>
+                            A confirmation will appear, indicating that the certificate import was successful. Press <i>OK</i>.
+                        </p>
+                        
+                        <h3 class="number"><span>Step </span>12</h3>
+                        <p>
+                            You're done! You may close any remaining certificate windows and continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.
+                        </p>
+					</div>
+                    
+                    <br />
+
+	<a href='#top'>Back to Top</a>

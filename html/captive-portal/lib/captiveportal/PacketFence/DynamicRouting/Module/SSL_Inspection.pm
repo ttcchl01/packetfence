@@ -2,41 +2,177 @@ package captiveportal::PacketFence::DynamicRouting::Module::SSL_Inspection;
 
 =head1 NAME
 
-DynamicRouting::Module::SSL_Inspection
+captiveportal::DynamicRouting::Module::Authentication::SSL_Inspection
 
 =head1 DESCRIPTION
 
-Module to show an SSL Inspection message to the user
+SSL Inspection module
 
 =cut
 
 use Moose;
 extends 'captiveportal::DynamicRouting::Module';
+with 'captiveportal::Role::Routed';
 
-has 'template' => (is => 'rw', default => sub {'ssl_inspection.html'});
+
+use Tie::IxHash;
+use pf::log;
+use List::Util qw(first);
+use pf::config;
+use pf::violation;
+use pf::config::violation;
+use pf::config::util;
+use pf::web::guest;
+use pf::util;
+use pf::node;
+use pf::constants;
+
+has '+route_map' => (default => sub {
+    tie my %map, 'Tie::IxHash', (
+        '/ssl_inspection/ios' => \&ios,
+        '/ssl_inspection/android' => \&android,
+        '/ssl_inspection/osx' => \&osx,
+        '/ssl_inspection/windows' => \&windows,
+        '/ssl_inspection/chrome' => \&chrome,
+        '/ssl_inspection/firefox' => \&firefox,
+        '/ssl_inspection/opera' => \&opera,
+        '/ssl_inspection/unsupported' => \&unsupported,
+        # fallback to the index
+        '/captive-portal' => \&index,
+    );
+    return \%map;
+});
 
 has 'skipable' => (is => 'rw', default => sub {1});
 
-#has 'message' => (is => 'rw', required => 1);
+has 'ssl_path' => (is => 'rw', required => 1);
 
-=head2 execute_child
 
-Display the message to the user and handle the continue if applicable
+=head2 index
+
+Present 
 
 =cut
 
-sub execute_child {
+sub index {
     my ($self) = @_;
-    if($self->app->request->param('next') && $self->skipable){
-        $self->done();
-    }
-    else {
-        $self->render($self->template, {
-            #message => $self->message, 
-            skipable => $self->skipable,
-            title => $self->description,
-        });
-    }
+
+    $self->render('ssl_inspection/index.html', {
+        title => "Download Certificate for your platform",
+    });
+}
+
+
+=head2 ios
+
+ios
+
+=cut
+
+sub ios {
+    my ($self) = @_;
+
+    $self->render('ssl_inspection/ios.html', {
+         title => "iOS",
+    });
+}
+
+=head2 android
+
+android
+
+=cut
+
+sub android {
+    my ($self) = @_;
+
+    $self->render('ssl_inspection/android.html', {
+         title => "Android",
+    });
+}
+
+=head2 xos
+
+xos
+
+=cut
+
+sub osx {
+    my ($self) = @_;
+
+    $self->render('ssl_inspection/osx.html', {
+         title => "OS X",
+    });
+}
+
+=head2 windows
+
+Windows
+
+=cut
+
+sub windows {
+    my ($self) = @_;
+
+    $self->render('ssl_inspection/windows.html', {
+         title => "Windows",
+    });
+}
+
+=head2 chrome
+
+chrome
+
+=cut
+
+sub chrome {
+    my ($self) = @_;
+
+    $self->render('ssl_inspection/chrome.html', {
+         title => "Chrome OS",
+    });
+}
+
+=head2 firefox
+
+Firefox
+
+=cut
+
+sub firefox {
+    my ($self) = @_;
+
+    $self->render('ssl_inspection/firefox.html', {
+         title => "Firefox",
+    });
+}
+
+=head2 opera
+
+Opera
+
+=cut
+
+sub opera {
+    my ($self) = @_;
+
+    $self->render('ssl_inspection/opera.html', {
+         title => "Opera",
+    });
+}
+
+=head2 unsupported
+
+unsupported
+
+=cut
+
+sub unsupported {
+    my ($self) = @_;
+
+    $self->render('ssl_inspection/unsupported.html', {
+         title => "Unsupported platform",
+    });
 }
 
 =head1 AUTHOR
