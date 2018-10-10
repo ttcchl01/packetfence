@@ -1,39 +1,27 @@
-
 <!--Body container that sets layout and inner content-->
 
-    <a name="top"></a>
-    
-	<body>
-		<div id="wrapper">
-			<div id="content" class="auth ">
-				<div id="inner-content">
+	<div class="u=padding">
 
 <!--Top navigation menu bar-->
 
-                 	<nav>
-                        <ul id="nav">
-                        	<li><a href="/ssl_inspection/ios">iOS</a></li>
+               	<nav>
+                    <ul class="o-list-inline o-layout--center caption">
+                        <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/ios">iOS</a></li>
+                        
+                        <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/osx">Mac OSX</a></li>
+                        
+                        <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/windows">Windows</a></li>
+                        
+                        <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/chrome">Chrome OS</a></li>
+                        
+                        <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/firefox">Firefox</a></li>
+                        
+                        <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/opera">Opera</a></li>
                             
-                            <li><a class="here" href="/ssl_inspection/android">Android</a></li>
-                            
-                            <li><a href="/ssl_inspection/osx">Mac OSX</a></li>
-                            
-                            <li><a href="/ssl_inspection/windows">Windows</a></li>
-                            
-                            <li><a href="/ssl_inspection/chrome">Chrome OS</a></li>
-                            
-                            <li><a href="/ssl_inspection/firefox">Firefox</a></li>
-                            
-                            <li><a href="/ssl_inspection/opera">Opera</a></li>
-                            
-                            <li><a href="/ssl_inspection/unsupported">Unsupported</a></li> 
-                        </ul>
-					</nav>
+                        <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/unsupported">Unsupported</a></li>                         
+		    </ul>
+		</nav>
                 	
-                    <br />
-
-                    <hr />
-					
                     <div id="guide">
 
 						<p>
@@ -58,19 +46,18 @@
 							First, click the <i>Download Certificate</i> button below; this will download the certificate file to a temporary location on your device.
 						</p>
 
-						<div class="buttons">
-							<p>
-    							<a href="WebbCity-Edge.cer" id="download-button" class="btn buttons">Download Certificate</a>
-							</p>
-
+        			                <div class="o-layout o-layout--center u-padding-bottom">
+        			                    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+        						<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>
+    						    </div>
 						</div>
 
 						<h3 class="number"><span>Step </span>2</h3>
 
-						<div class="guide-image">
-							<div><div>
-								<img src="./style/img/portal-ssl-guides/android-01-certificate-name.png" alt="Android certificate name prompt" width="383" height="640">
-							</div></div>
+						<div class="o-layout o-layout--center u-padding-bottom">
+                            			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+							<img src="./style/img/portal-ssl-guides/android-01-certificate-name.png" alt="Android certificate name prompt" >
+						    </div>
 						</div>
 
 						<p>
@@ -89,10 +76,10 @@
 
 						<h3 class="number"><span>Step </span>4</h3>
 
-						<div class="guide-image">
-							<div><div>
-								<img src="./style/img/portal-ssl-guides/android-02-installed.png" alt="Android certificate installation confirmation" width="383" height="640">
-							</div></div>
+						<div class="o-layout o-layout--center u-padding-bottom">
+                            			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+							<img src="./style/img/portal-ssl-guides/android-02-installed.png" alt="Android certificate installation confirmation" >
+						    </div>
 						</div>
 
 						<p>
@@ -106,13 +93,5 @@
 						</p>
                         
 					</div>
-                    
-                    <br />
-                    	
-	<a href='#top'>Back to Top</a>
-    
                 </div>
-			</div>
-		</div>
 [% INCLUDE ssl_inspection/common.html %]
-	</body>

@@ -1,39 +1,27 @@
 <!--Body container that sets layout and inner content-->
 
-    <a name="top"></a>
-    
-	<body>
-		<div id="wrapper">
-			<div id="content" class="auth ">
-				<div id="inner-content">
+	<div class="u-padding">
 
 <!--Top navigation menu bar-->
 
-                	<nav>
-                        <ul id="nav">
-                       	    <li><a href="/ssl_inspection/ios">iOS</a></li>
+                    <nav>
+                        <ul class="o-list-inline o-layout--center caption">
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/ios">iOS</a></li>
+
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/android">Android</a></li>
                             
-                            <li><a href="/ssl_inspection/android">Android</a></li>
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/osx">Mac OSX</a></li>
                             
-                            <li><a href="/ssl_inspection/osx">Mac OSX</a></li>
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/chrome">Chrome OS</a></li>
                             
-                            <li><a class="here" href="/ssl_inspection/windows">Windows</a></li>
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/firefox">Firefox</a></li>
                             
-                            <li><a href="/ssl_inspection/chrome">Chrome OS</a></li>
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/opera">Opera</a></li>
                             
-                            <li><a href="/ssl_inspection/firefox">Firefox</a></li>
-                            
-                            <li><a href="/ssl_inspection/opera">Opera</a></li>
-                            
-                            <li><a href="/ssl_inspection/unsupported">Unsupported</a></li> 
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/unsupported">Unsupported</a></li> 
                         </ul>
                     </nav>
-                    
-                    <br />
-                    
-                    <hr />
-                    
-                    <div id="guide">
+ 
                         <p>
                         	This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.
 						</p>
@@ -49,18 +37,17 @@
                             	First, click the <i>Download Certificate</i> button below; this will begin a download of the file to your computer.
                         	</p>
                         
-                        <div class="buttons">
-                            <p>
-                            	<a href="/common/certificate.crt" id="download-button" class="btn buttons">Download Certificate</a>
-                            </p>
-                        </div>
-                        
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+        			<a href="/common/certificate.crt" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>
+    			    </div>
+			</div>                        
                         <h3 class="number"><span>Step </span>2</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
-                                    <img src="./style/img/portal-ssl-guides/windows-01-open-or-save.png" alt="Windows save prompt" width="560" height="400" />
-                            </div></div>
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+                                    <img src="./style/img/portal-ssl-guides/windows-01-open-or-save.png" alt="Windows save prompt" />
+                            </div>
                         </div>
                         
                         <p>
@@ -73,10 +60,10 @@
                         
                         <h3 class="number"><span>Step </span>3</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
-                            	<img src="./style/img/portal-ssl-guides/windows-02-security-warning.png" alt="Windows security prompt" />
-                            </div></div>
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">                           	
+				<img src="./style/img/portal-ssl-guides/windows-02-security-warning.png" alt="Windows security prompt" />
+                            </div>
                         </div>
                         
                         <p>
@@ -85,10 +72,10 @@
                         
                         <h3 class="number"><span>Step </span>4</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
                             	<img src="./style/img/portal-ssl-guides/windows-03-install-certificate.png" alt="Windows Certificate dialogue" />
-							</div></div>
+			    </div>
                         </div>
                         
                         <p>
@@ -99,10 +86,10 @@
                         
                         <h3 class="number"><span>Step </span>5</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
-                            	<img src="./style/img/portal-ssl-guides/windows-04-certificate-wizard.png" alt="Windows Certificate Import Wizard" />
-							</div></div>
+              		<div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+				<img src="./style/img/portal-ssl-guides/windows-04-certificate-wizard.png" alt="Windows Certificate Import Wizard" />
+			    </div>
                         </div>
                         
                         <p>
@@ -111,10 +98,10 @@
                         
                         <h3 class="number"><span>Step </span>6</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
                             	<img src="./style/img/portal-ssl-guides/windows-05-certificate-store.png" alt="Windows Certificate Import Wizard" />
-							</div></div>
+			    </div>
                         </div>
                         
                         <p>
@@ -123,10 +110,10 @@
                         
                         <h3 class="number"><span>Step </span>7</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
-                            	<img src="./style/img/portal-ssl-guides/windows-06-select-certificate-store.png" alt="Windows Select Certificate Store prompt" />
-                            </div></div>
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+				<img src="./style/img/portal-ssl-guides/windows-06-select-certificate-store.png" alt="Windows Select Certificate Store prompt" />
+                            </div>
                         </div>
                         
                         <p>
@@ -135,10 +122,10 @@
                         
                         <h3 class="number"><span>Step </span>8</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
                             	<img src="./style/img/portal-ssl-guides/windows-07-place-all-certificates.png" alt="Windows Certificate Import Wizard" />
-							</div></div>
+			    </div>
                         </div>
                         
                         <p>
@@ -147,10 +134,10 @@
                         
                         <h3 class="number"><span>Step </span>9</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
                             	<img src="./style/img/portal-ssl-guides/windows-08-completing-wizard.png" alt="Windows Certificate Import Wizard" />
-                            </div></div>
+                            </div>
                         </div>
                         
                         <p>
@@ -159,10 +146,10 @@
                         
                         <h3 class="number"><span>Step </span>10</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
                             	<img src="./style/img/portal-ssl-guides/windows-09-certificate-security-warning.png" alt="Windows Security Warning dialogue" />
-							</div></div>
+			    </div>
                         </div>
                         
                         <p>
@@ -171,10 +158,10 @@
                         
                         <h3 class="number"><span>Step </span>11</h3>
                         
-                        <div class="guide-image">
-                            <div><div>
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
                                 <img src="./style/img/portal-ssl-guides/windows-10-import-successful.png" alt="Windows Certificate Import Wizard" />
-                            </div></div>
+                            </div>
                         </div>
                         
                         <p>
@@ -189,7 +176,6 @@
                     
                     <br />
 
-	<a href='#top'>Back to Top</a>
 
 [% INCLUDE ssl_inspection/common.html %]
 

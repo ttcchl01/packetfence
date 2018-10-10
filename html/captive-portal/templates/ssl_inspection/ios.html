@@ -1,55 +1,39 @@
 <!--Body container that sets layout and inner content-->
 
-    <a name="top"></a>
-    
-	<body>
-		<div id="wrapper">
-			<div id="content" class="auth ">
-				<div id="inner-content">
-                
+    <div class="u-padding">
+
 <!--Top navigation menu bar-->
                 
                 	<nav>
-                        <ul id="nav">
-                        	<li><a class="here" href="/ssl_inspection/ios">iOS</a></li>
+                        <ul class="o-list-inline o-layout--center caption">
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/android">Android</a></li>
                             
-                            <li><a href="/ssl_inspection/android">Android</a></li>
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/osx">Mac OSX</a></li>
                             
-                            <li><a href="/ssl_inspection/osx">Mac OSX</a></li>
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/windows">Windows</a></li>
                             
-                            <li><a href="/ssl_inspection/windows">Windows</a></li>
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/chrome">Chrome OS</a></li>
                             
-                            <li><a href="/ssl_inspection/chrome">Chrome OS</a></li>
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/firefox">Firefox</a></li>
                             
-                            <li><a href="/ssl_inspection/firefox">Firefox</a></li>
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/opera">Opera</a></li>
                             
-                            <li><a href="/ssl_inspection/opera">Opera</a></li>
-                            
-                            <li><a href="/ssl_inspection/unsupported">Unsupported</a></li> 
+                            <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/unsupported">Unsupported</a></li> 
                         </ul>
                     </nav>
-                    
-                    <br />
-					
-                    <hr />
-					
-                    <div id="guide">
-                    
+
 						<p>
 							This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.
 						</p>
-                        
-                    	<p>
-                        	<strong>
-                        		<font color="red"><u>Note:</u></font> If you have a district owned iPad, <i>please</i> visit the iPad Enrollment Portal <u><a href="http://ipad.wcr7.org/">here</a></u> instead of the Certificate Download option below first.
-                        	</strong>
-                        </p>                 
+						
+					    <div class="o-media o-media--notice u-padding-small u-margin-vertical">
+                            <div class="o-media__img">[% flashIcon(level='notice', size='tiny') %]</div>
+                            <p class="o-media__body">If you have a district owned iPad, please visit the <a href="http://ipad.wcr7.org/">iPad Enrollment Portal</a> instead of the Certificate Download option below first.</p>
+                        </div>
 						
                         <p>
-                        	<strong>
-								This guide will help you install the SSL filtering certificate for Apple mobile devices, including the iPad, iPhone, and iPod touch. This guide is not primarily for district owned iPads.
-							</strong>
-						</p>
+This guide will help you install the SSL filtering certificate for Apple mobile devices, including the iPad, iPhone, and iPod touch. This guide is <i>not</i> primarily for district owned iPads.
+                        </p>
 
 						<h3 class="number"><span>Step </span>1</h3>
 
@@ -57,19 +41,18 @@
 							First, click the <i>Download Certificate</i> button below; this will download the certificate file to a temporary location on your device.
 						</p>
 
-						<div class="buttons">
-							<p>
-                    			<a href="WebbCity-Edge.cer" id="download-button" class="btn buttons">Download Certificate</a>
-                			</p>
-
+                        <div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+        						<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>
+    						</div>
 						</div>
 
         				<h3 class="number"><span>Step </span>2</h3>
 
-						<div class="guide-image">
-							<div><div>
-								<img src="./style/img/portal-ssl-guides/ios-01-not-trusted.png" alt="iOS certificate trust prompt" width="512" height="682">
-							</div></div>
+						<div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+							    <img src="./style/img/portal-ssl-guides/ios-01-not-trusted.png" alt="iOS certificate trust prompt">
+						    </div>
 						</div>
 
 						<p>
@@ -82,10 +65,10 @@
 
 						<h3 class="number"><span>Step </span>3</h3>
 
-						<div class="guide-image">
-							<div><div>
-								<img src="./style/img/portal-ssl-guides/ios-03-passcode.png" alt="iOS passcode prompt" width="512" height="682">
-							</div></div>
+						<div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-4/5@desktop">
+								<img src="./style/img/portal-ssl-guides/ios-03-passcode.png" alt="iOS passcode prompt">
+							</div>
 						</div>
 
 						<p>
@@ -94,10 +77,10 @@
 
 						<h3 class="number"><span>Step </span>4</h3>
 
-						<div class="guide-image">
-							<div><div>
-								<img src="./style/img/portal-ssl-guides/ios-04-trusted.png" alt="iOS trust prompt" width="512" height="682">
-							</div></div>
+						<div class="o-layout o-layout--center u-padding-bottom">
+                            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+								<img src="./style/img/portal-ssl-guides/ios-04-trusted.png" alt="iOS trust prompt">
+							</div>
 						</div>
 
 						<p>
@@ -109,14 +92,7 @@
 						<p>
 							You're done! You may close or switch away from the Settings application and continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.
 						</p>
-					</div>
-                    
-                    <br />
 
-	<a href='#top'>Back to Top</a>
-                    
-                </div>
 			</div>
-		</div>
+
 [% INCLUDE ssl_inspection/common.html %]
-</body>
