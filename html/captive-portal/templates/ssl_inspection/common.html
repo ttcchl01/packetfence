@@ -2,17 +2,50 @@
 <div class="o-layout o-layout--center u-padding-bottom">
    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
 	<input id="testSSL" type="button" value="Test SSL Certificate" />
+	<a id="test" type="button" class="btn btn-primary" data-toggle="modal" href="#testSSL">Test</a>
+	<div class="modal fade hide" id="testSSLcert">
+	  <div class="modal-header">
+	    <h3><i>[% l('Test SSL Certificate') %]</i> <span id="content"></span></h3>
+	  </div>
+	  <div class="modal-body">
+ 	    hello
+	  </div>
+	  <div class="modal-footer">
+	    <a href="#" class="btn" data-dismiss="modal">[% l('OK') %]</a>
+	  </div>
+	</div>
    </div>
 </div>
 
 <script language="Javascript">
   $("#testSSL").on('click', function() {
-    console.log('clicked');
     $.ajax({url: "https://packetfence.org"}).done(function(){
       console.log('success');
     }).fail(
       function(){console.log("Failed")}
     )
   });
+
+
+    $('#test').on('click', function() {
+        var btn = $(this);
+        var href = btn.attr('href');
+        var modal = $('#testSSLcert');
+         if (valid) {
+            btn.button('loading');
+            $.ajax({
+                url: "https://packetfence.org"
+            })
+            .done(function() {
+		console.log('Success');
+                showSuccess('Test successful');
+            })
+            .fail(function() {
+	        console.log('Failed');
+                showPermanentError('Failed');
+            });
+        }
+        return false;
+    });
 
 </script>

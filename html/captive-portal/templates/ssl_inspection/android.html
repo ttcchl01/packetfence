@@ -22,76 +22,76 @@
 		    </ul>
 		</nav>
                 	
-                    <div id="guide">
+                <div id="guide">
 
-						<p>
-							This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.
-						</p>
+			<p>
+				[% i18n("This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.") %]
+			</p>
 
                     	<p>
                     		<strong>
-                        		<font color="red"><u>Note:</u></font> If you have a district owned Android device, <i>please</i> visit the Android Enrollment Portal <u><a href="http://ipad.wcr7.org/">here</a></u> instead of the Certificate Download option below first.
+                        		[% i18n('<font color="red"><u>Note:</u></font> If you have a district owned Android device, <i>please</i> visit the Android Enrollment Portal <u><a href="http://ipad.wcr7.org/">here</a></u> instead of the Certificate Download option below first.') | none %]
                         	</strong>
-						</p>
+			</p>
                     
-						<p>
+			<p>
                     		<strong>
-								This guide will help you install the SSL filtering certificate for Android-based mobile devices, including the Nexus, Galaxy, Droid, and Evo, as well as several other phones and tablets. This guide is not primarily for district owned Android devices.
-							</strong>
-						</p>
+					[% i18n("This guide will help you install the SSL filtering certificate for Android-based mobile devices, including the Nexus, Galaxy, Droid, and Evo, as well as several other phones and tablets. This guide is not primarily for district owned Android devices.") | none %]
+				</strong>
+			</p>
 
-						<h3 class="number"><span>Step </span>1</h3>
+			<h3 class="number"><span>[% i18n("Step ") %]</span>1</h3>
 
-						<p>
-							First, click the <i>Download Certificate</i> button below; this will download the certificate file to a temporary location on your device.
-						</p>
+			<p>
+				[% i18n("First, click the <i>Download Certificate</i> button below; this will download the certificate file to a temporary location on your device.") | none %]
+			</p>
 
-        			                <div class="o-layout o-layout--center u-padding-bottom">
-        			                    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-        						<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>
-    						    </div>
-						</div>
+        	        <div class="o-layout o-layout--center u-padding-bottom">
+        	            <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+        			[% i18n('<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>') | none %]
+    			    </div>
+			</div>
 
-						<h3 class="number"><span>Step </span>2</h3>
+			<h3 class="number"><span>[% i18n("Step ") %]</span>2</h3>
 
-						<div class="o-layout o-layout--center u-padding-bottom">
-                            			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-							<img src="./style/img/portal-ssl-guides/android-01-certificate-name.png" alt="Android certificate name prompt" >
-						    </div>
-						</div>
+			<div class="o-layout o-layout--center u-padding-bottom">
+                	    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+				<img src="./style/img/portal-ssl-guides/android-01-certificate-name.png" alt="Android certificate name prompt" >
+			    </div>
+			</div>
 
-						<p>
-							You will be prompted to enter a name for the certificate. Enter whatever you like (<i>WebbCity</i> is recommended), and then tap <i>OK</i> or the Enter button on the keyboard.
-						</p>
+			<p>
+				[% i18n("You will be prompted to enter a name for the certificate. Enter whatever you like (<i>WebbCity</i> is recommended), and then tap <i>OK</i> or the Enter button on the keyboard.") | none %]
+			</p>
 
-						<p>
-							(Note: Android devices vary greatly, so you may not see  exactly the same thing if you are using another device or a different version of Android; however, the general process and wording should be the same.)
-						</p>
-						
-                        <h3 class="number"><span>Step </span>3</h3>
+			<p>
+				[% i18n("(Note: Android devices vary greatly, so you may not see exactly the same thing if you are using another device or a different version of Android; however, the general process and wording should be the same.)") %]
+			</p>
+				
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>3</h3>
 
-						<p>
-							Depending on your device and its configuration, you may be prompted to enter your device PIN. If you don't have a PIN set, you maybe prompted to create one.
-						</p>
+			<p>
+				[% i18n("Depending on your device and its configuration, you may be prompted to enter your device PIN. If you don't have a PIN set, you maybe prompted to create one.") %]
+			</p>
 
-						<h3 class="number"><span>Step </span>4</h3>
+			<h3 class="number"><span>[% i18n("Step ") %]</span>4</h3>
 
-						<div class="o-layout o-layout--center u-padding-bottom">
-                            			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-							<img src="./style/img/portal-ssl-guides/android-02-installed.png" alt="Android certificate installation confirmation" >
-						    </div>
-						</div>
+			<div class="o-layout o-layout--center u-padding-bottom">
+    			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+				<img src="./style/img/portal-ssl-guides/android-02-installed.png" alt="Android certificate installation confirmation" >
+			    </div>
+			</div>
 
-						<p>
-							You will see a confirmation that the certificate has been installed. In your notifications, it might say 'Network may be monitored by an unknown third party'. That is normal and should be ignored.
-						</p>
+			<p>
+				[% i18n("You will see a confirmation that the certificate has been installed. In your notifications, it might say 'Network may be monitored by an unknown third party'. That is normal and should be ignored.") %]
+			</p>
 
-						<h3 class="number"><span>Step </span>5</h3>
+			<h3 class="number"><span>[% i18n("Step ") %]</span>5</h3>
 
-						<p>
-							You're done! You may continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.
-						</p>
-                        
-					</div>
-                </div>
+			<p>
+				[% i18n("You're done! You may continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.") %]
+			</p>
+
+		</div>
+	</div>
 [% INCLUDE ssl_inspection/common.html %]

@@ -1,7 +1,5 @@
 <!--Body container that sets layout and inner content-->
 
-		<div id="wrapper">
-
 <!--Top navigation menu bar-->
 
                 <nav>
@@ -22,36 +20,35 @@
                     </ul>
                 </nav>
 					
-                <div id="guide">
 		<p>
-						This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.
+			[% i18n("This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.") %]
 		</p>
 
 		<p>
             	    <strong>
-			This guide will help you install the SSL filtering certificate for the Opera browser.
+			[% i18n("This guide will help you install the SSL filtering certificate for the Opera browser.") %]
 		    </strong>
 		</p>
 				
             	<p>
             	    <strong>
-        		<font color="red"><u>Note:</u></font> This guide is for Opera version 12 and below. Newer versions of Opera will use your computer system's certificate or keychain manager instead of your browser's local certificate manager. If you have Opera version 15 or above, please download either the <a href="../ssl_inspection/osx">Mac OS X</a> or <a href="../ssl_inspection/windows">Windows</a> based certificate, or any of the other platforms, depending on your system.
+        		[% i18n('<font color="red"><u>Note:</u></font> This guide is for Opera version 12 and below. Newer versions of Opera will use your computer system\'s certificate or keychain manager instead of your browser\'s local certificate manager. If you have Opera version 15 or above, please download either the <a href="../ssl_inspection/osx">Mac OS X</a> or <a href="../ssl_inspection/windows">Windows</a> based certificate, or any of the other platforms, depending on your system') | none %]
         	    </strong>
 		</p>
 		
-        	<h3 class="number"><span>Step </span>1</h3>
+        	<h3 class="number"><span>[% i18n("Step ") %]</span>1</h3>
 
 		<p>
-		    First, click the <i>Download Certificate</i> button below; this will download the certificate file to a temporary location on your computer.
+			[% i18n("First, click the <i>Download Certificate</i> button below; this will download the certificate file to a temporary location on your computer.") | none %]
 		</p>
 
                 <div class="o-layout o-layout--center u-padding-bottom">
                     <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-        		<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>
+        		[% i18n('<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>') | none %]
     		    </div>
 		</div>
 
-		<h3 class="number"><span>Step </span>2</h3>
+		<h3 class="number"><span>[% i18n("Step ") %]</span>2</h3>
 
 		<div class="o-layout o-layout--center u-padding-bottom">
 		    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
@@ -60,14 +57,14 @@
 		</div>
 
 		<p>
-			Next, a dialogue will appear, asking if you would like to install the certificate authority. Click <i>Install</i>.
+			[% i18n("Next, a dialogue will appear, asking if you would like to install the certificate authority. Click <i>Install</i>.") | none %]
 		</p>
 
 		<p>
-			(Note: These images show Opera on Mac OS X. If your computer runs Windows or Linux, the buttons may look different - but the words should be the same.)
+			[% i18n("(Note: These images show Opera on Mac OS X. If your computer runs Windows or Linux, the buttons may look different - but the words should be the same.)") %]
 		</p>
 
-		<h3 class="number"><span>Step </span>3</h3>
+		<h3 class="number"><span>[% i18n("Step ") %]</span>3</h3>
 
 		<div class="o-layout o-layout--center u-padding-bottom">
   		    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
@@ -76,15 +73,13 @@
 		</div>
 
 		<p>
-			After clicking <i>Install</i>, another dialogue will appear, asking if you are <i>sure you want to trust this issuer</i>. Click <i>OK</i> here.
+			[% i18n("After clicking <i>Install</i>, another dialogue will appear, asking if you are <i>sure you want to trust this issuer</i>. Click <i>OK</i> here.") | none %]
 		</p>
         
-        	<h3 class="number"><span>Step </span>4</h3>
+        	<h3 class="number"><span>[% i18n("Step ") %]</span>4</h3>
 
 		<p>
-			You're done! You may continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.
+			[% i18n("You're done! You may continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.") %]
 		</p>
-		</div>
         
-	</div>
 [% INCLUDE ssl_inspection/common.html %]

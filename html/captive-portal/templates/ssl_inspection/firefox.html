@@ -23,34 +23,32 @@
                     
                 <div id="guide">
 			<p>
-				This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.
+				[% i18n("This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.") %]
 			</p>
 		
 			<p>
-                
-				This guide will help you install the SSL filtering certificate for browsers based on the Mozilla platform, such as Firefox.
-						
+				[% i18n("This guide will help you install the SSL filtering certificate for browsers based on the Mozilla platform, such as Firefox.") %]
                         </p>
                         
                         <h3> 
-                        	**Please Note**
+                        	[% i18n("**Please Note**") %]
                         </h3>
                         
                         <p>
                         	<strong>
-								Firefox cannot get ssl updates from our servers. If you start having web page connection issues again, you will need to come back to this page and redo steps to get the newest certificate.  
-							</strong>
+					[% i18n("Firefox cannot get ssl updates from our servers. If you start having web page connection issues again, you will need to come back to this page and redo steps to get the newest certificate.") %]
+				</strong>
                         </p>
 
-			<h3 class="number"><span>Step </span>1</h3>
+			<h3 class="number"><span>[% i18n("Step ") %]</span>1</h3>
 
 			<p>
-				First, click the <i>Download Certificate</i> button below; this will download the certificate file to a temporary location on your computer.
+				[% i18n("First, click the <i>Download Certificate</i> button below; this will download the certificate file to a temporary location on your computer.") | none %]
 			</p>
 
                         <div class="o-layout o-layout--center u-padding-bottom">
                             <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-        			<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>
+        			[% i18n('<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>') | none %]
     			    </div>
 			</div>
                         
@@ -60,10 +58,10 @@
 			    </div>
 			</div>
                 
-			<h3 class="number"><span>Step </span>2</h3>
+			<h3 class="number"><span>[% i18n("Step ") %]</span>2</h3>
 
 			<p>
-				In your firefox browser click on the "menu" botton at the top right of your browser and select "Options".
+				[% i18n('In your firefox browser click on the "menu" botton at the top right of your browser and select "Options".') %]
 			</p>
                 
 			<div class="o-layout o-layout--center u-padding-bottom">
@@ -72,10 +70,10 @@
 			    </div>
 			</div>
 
-			<h3 class="number"><span>Step </span>3</h3>
+			<h3 class="number"><span>[% i18n("Step ") %]</span>3</h3>
                         
                         <p>
-                        	In the Options page click "Advanced" on the lefthand side. Under Requests make sure "Select One automatically" is selected and click the button "View Certificates" at the bottom.
+                        	[% i18n('In the Options page click "Advanced" on the lefthand side. Under Requests make sure "Select One automatically" is selected and click the button "View Certificates" at the bottom.') %]
                         </p>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
@@ -84,10 +82,10 @@
 			    </div>
 			</div>
                         
-                        <h3 class="number"><span>Step </span>4</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>4</h3>
                         
                         <p>
-                        	In the Certificate Manager window click on the "Authorities" Tab and click on "Import".
+                        	[% i18n('In the Certificate Manager window click on the "Authorities" Tab and click on "Import".') %]
                         </p>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
@@ -96,10 +94,10 @@
 			    </div>
 			</div>
                         
-                        <h3 class="number"><span>Step </span>5</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>5</h3>
                         
                         <p>
-                        	Brows for the "WebbCity-Edge.cer" file you downloaded earlier and select it.
+                        	[% i18n('Browse for the "WebbCity-Edge.cer" file you downloaded earlier and select it.') %]
                         </p>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
@@ -108,10 +106,10 @@
 			    </div>
 			</div>
                         
-                        <h3 class="number"><span>Step </span>6</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>6</h3>
                         
                         <p>
-                        	On the next windows make sure to checkmark that all options and click "OK".
+                        	[% i18n('On the next windows make sure to checkmark that all options and click "OK".') %]
                         </p>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
@@ -120,10 +118,10 @@
 			    </div>
 			</div>
                         
-                        <h3 class="number"><span>Step </span>7</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>7</h3>
                         
                         <p>
-			You're done! You may continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.
+				[% i18n("You're done! You may continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.") %]
 			</p>
 		</div>
 [% INCLUDE ssl_inspection/common.html %]

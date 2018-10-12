@@ -1,6 +1,5 @@
 <!--Body container that sets layout and inner content-->
     
-		<div class="u-padding">
 
 <!--Top navigation menu bar-->
 
@@ -26,28 +25,26 @@
                 <div id="guide">
                     
                         <p>
-                            This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.
+                            [% i18n("This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.") %]
                         </p>
 
                         <p>
-                        	<strong>
-                            	This guide will help you install the SSL filtering certificate for Mac-based browsers which use the operating system's built-in Keychain facility — this includes Safari and Chrome. This guide is not primarily for district owned Mac OSX computers.
-                        	</strong>
-						</p>
+                       	    [% i18n("<strong>This guide will help you install the SSL filtering certificate for Mac-based browsers which use the operating system's built-in Keychain facility — this includes Safari and Chrome. This guide is not primarily for district owned Mac OSX computers.</strong>") | none %]
+			</p>
                 
-                        <h3 class="number"><span>Step </span>1</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>1</h3>
                 
                         <p>
-                            First, click the <i>Download Certificate</i> button below; this will download the certificate file to your computer.
+                            [% i18n("First, click the <i>Download Certificate</i> button below; this will download the certificate file to your computer.") | none %]
                         </p>
                 
                         <div class="o-layout o-layout--center u-padding-bottom">
                             <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-        			<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>
+        			[% i18n('<a href="WebbCity-Edge.cer" class="c-btn c-btn--secondary c-btn--ghost u-1/1">Download Certificate</a>') | none %]
     			    </div>
 			</div>
 
-                        <h3 class="number"><span>Step </span>2</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>2</h3>
                         
                        	<div class="o-layout o-layout--center u-padding-bottom">
                             <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
@@ -56,14 +53,14 @@
                         </div>
                         
                         <p>
-                            When the certificate finishes downloading, it will appear in your default Downloads folder. Usually, this can be accessed via the Dock near the Trash icon, or, depending on your browser, it may appear in a dedicated downloads window. Locate the file and click to open it. 
+                            [% i18n("When the certificate finishes downloading, it will appear in your default Downloads folder. Usually, this can be accessed via the Dock near the Trash icon, or, depending on your browser, it may appear in a dedicated downloads window. Locate the file and click to open it.") %]
                         </p>
                         
                         <p>
-                            (Note: You may not see exactly the same thing if you are using another browser or a different version of OS X; however, the general process and wording should be the same.)
+                            [% i18n("(Note: You may not see exactly the same thing if you are using another browser or a different version of OS X; however, the general process and wording should be the same.)") %]
                         </p>
                         
-                        <h3 class="number"><span>Step </span>3</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>3</h3>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
@@ -72,10 +69,10 @@
                         </div>
                         
                         <p>
-                            Opening the file will launch the Keychain Access application; here, you maybe asked whether to add the certifitcate to the login keychain or the System keychain. It is preferred if the certificate is added to the 'System' keychain in-case there are other users who might potentially login. Then click <i>Add</i>.
+                              [% i18n("Opening the file will launch the Keychain Access application; here, you maybe asked whether to add the certifitcate to the login keychain or the System keychain. It is preferred if the certificate is added to the 'System' keychain in-case there are other users who might potentially login. Then click <i>Add</i>.") | none %]
                         </p>
 
-                        <h3 class="number"><span>Step </span>4</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>4</h3>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
@@ -84,10 +81,10 @@
                         </div>
                         
                         <p>
-                            Next, you might be prompted to enter in your login information to make the change. After entering your login information, click <i>Update Settings</i>.
+                                [% i18n("Next, you might be prompted to enter in your login information to make the change. After entering your login information, click <i>Update Settings</i>.") | none %]
                         </p>
                         
-                        <h3 class="number"><span>Step </span>5</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>5</h3>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
@@ -96,10 +93,10 @@
                         </div>
                         
                         <p>
-                            Here, you will be asked whether to always trust Securly certificates. Click <i>Always Trust</i>.
+                                [% i18n("Here, you will be asked whether to always trust Securly certificates. Click <i>Always Trust</i>.") | none %]
                         </p>
                         
-                        <h3 class="number"><span>Step </span>6</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>6</h3>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
@@ -108,21 +105,21 @@
                         </div>
                         
                         <p>
-                            Next, you will be prompted to enter the user name and password you use to log on to the computer; do so, and click <i>Modify Keychain</i>.
+                                [% i18n("Next, you will be prompted to enter the user name and password you use to log on to the computer; do so, and click <i>Modify Keychain</i>.") | none %]
                         </p>
                         
-                        <h3 class="number"><span>Step </span>7</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>7</h3>
                         <p>
-                            You're done! After entering your password, you can close Keychain Access and continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.
+                                [% i18n("You're done! After entering your password, you can close Keychain Access and continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.") %]
                         </p>
                         
                         <h3> ***Note*** </h3>
                         <p>
-                        	If you did not see the prompts mentioned above you will need to manually "Trust" the newly installed certificate.
+                        	[% i18n("If you did not see the prompts mentioned above you will need to manually "Trust" the newly installed certificate.") %]
                         </p>
-                        <h3 class="number"><span>Step </span>A</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>A</h3>
                         <p>
-                        	Open up Keychain Access. Finder > Applications > Utilities > Keychain Access
+                        	[% i18n("Open up Keychain Access. Finder > Applications > Utilities > Keychain Access") %]
                         </p>
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
@@ -135,10 +132,10 @@
                                 <img src="./style/img/portal-ssl-guides/osx/Utilities-KeychainAccess.png" alt="Utilities-KeychainAccess" >
                             </div>
                          </div>  
-                         <h3 class="number"><span>Step </span>B</h3>   
+                         <h3 class="number"><span>[% i18n("Step ") %]</span>B</h3>   
                             
                         <p>
-                        	Make sure "System" selcted in the left column and then Double click on "Fireware HTTPS Proxy...."
+                        	[% i18n('Make sure "System" selcted in the left column and then Double click on "Fireware HTTPS Proxy...."') %]
                         </p>
                             
 			<div class="o-layout o-layout--center u-padding-bottom">
@@ -146,13 +143,13 @@
                                 <img src="./style/img/portal-ssl-guides/osx/KeychainAccess-Fireware.png" alt="KeychainAccess-Fireware" >
                             </div>
                         </div> 
-                         <h3 class="number"><span>Step </span>C</h3>
+                         <h3 class="number"><span>[% i18n("Step ") %]</span>C</h3>
                             
                          <p>
-                         	Make sure "Trust" is expanded and select the dropdown next to "When using this certificate:" and change it to "Always Trust"
+                         	[% i18n('Make sure "Trust" is expanded and select the dropdown next to "When using this certificate:" and change it to "Always Trust"') %]
                          </p>
                          <p>
-                         	You may now close the window.
+                         	[% i18n("You may now close the window.") %]
                          </p>
                             
 			<div class="o-layout o-layout--center u-padding-bottom">
@@ -166,10 +163,10 @@
                             </div>
                         </div>
 
-                        <h3 class="number"><span>Step </span>D</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>D</h3>
                             
                         <p>
-                        	You should now see a blue "+" right next to the certificate.
+                        	[% i18n('You should now see a blue "+" right next to the certificate.') %]
                         </p>
                             
 			<div class="o-layout o-layout--center u-padding-bottom">
@@ -177,10 +174,10 @@
                                 <img src="./style/img/portal-ssl-guides/osx/Fireware-Trusted.png" alt="Fireware-Trusted" >
                             </div>
                         </div>
-                        <h3 class="number"><span>Step </span>E</h3>
+                        <h3 class="number"><span>[% i18n("Step ") %]</span>E</h3>
                           
                         <p>
-                            You're done! You can close Keychain Access and continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.
+                            [% i18n("You're done! You can close Keychain Access and continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.") %]
                         </p>
                             
                 </div>
