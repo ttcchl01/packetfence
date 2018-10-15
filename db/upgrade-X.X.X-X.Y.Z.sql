@@ -108,6 +108,16 @@ CREATE TABLE key_value_storage (
 DROP table api_user;
 
 --
+-- Add voip column to locationlog
+--
+alter table locationlog add column voip enum('no','yes') NOT NULL DEFAULT 'no';
+
+--
+-- Update the locationlog voip information from the node table information
+--
+update locationlog join node on locationlog.mac = node.mac set locationlog.voip = node.voip;
+
+--
 -- Add potd column in person table
 --
 
