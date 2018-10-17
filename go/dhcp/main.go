@@ -280,7 +280,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 
 		answer.Local = handler.layer2
 		pffilter := filter_client.NewClient()
-
+		spew.Dump(options)
 		var Options map[string]string
 		Options = make(map[string]string)
 		for option, value := range options {
@@ -295,6 +295,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 		})
 
 		spew.Dump(info)
+
 		log.LoggerWContext(ctx).Debug(p.CHAddr().String() + " " + msgType.String() + " xID " + sharedutils.ByteToString(p.XId()))
 
 		GlobalTransactionLock.Lock()
