@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/coreos/go-systemd/daemon"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/fdurand/arp"
 	cache "github.com/fdurand/go-cache"
 	_ "github.com/go-sql-driver/mysql"
@@ -35,6 +34,8 @@ var MySQLdatabase *sql.DB
 
 var GlobalIpCache *cache.Cache
 var GlobalMacCache *cache.Cache
+
+var GlobalFilterCache *cache.Cache
 
 var GlobalTransactionCache *cache.Cache
 var GlobalTransactionLock *sync.Mutex
@@ -65,6 +66,9 @@ func main() {
 	GlobalTransactionCache = cache.New(5*time.Minute, 10*time.Minute)
 	GlobalTransactionLock = &sync.Mutex{}
 	RequestGlobalTransactionCache = cache.New(5*time.Minute, 10*time.Minute)
+
+	//  Initialize GlobalFilterCache
+	GlobalFilterCache = cache.New(2*time.Minute, 4*time.Minute)
 
 	// Read DB config
 	pfconfigdriver.PfconfigPool.AddStruct(ctx, &pfconfigdriver.Config.PfConf.Database)
@@ -280,13 +284,12 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 
 		answer.Local = handler.layer2
 		pffilter := filter_client.NewClient()
-		spew.Dump(options)
 		var Options map[string]string
 		Options = make(map[string]string)
 		for option, value := range options {
 			key := []byte(option.String())
 			key[0] = key[0] | ('a' - 'A')
-			Options[string(key)] = Tlv.Tlvlist[int(option)].Decode.String(value)
+			Options[string(key)] = Tlv.Tlvlist[int(option)].Transform.String(value)
 		}
 
 		log.LoggerWContext(ctx).Debug(p.CHAddr().String() + " " + msgType.String() + " xID " + sharedutils.ByteToString(p.XId()))
@@ -396,11 +399,18 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 
 		reply:
 
-			info, _ := pffilter.FilterDhcp(msgType.String(), map[string]interface{}{
-				"mac":     p.CHAddr().String(),
-				"options": Options,
-			})
-			spew.Dump(info)
+			var info interface{}
+			Filter, found := GlobalFilterCache.Get(p.CHAddr().String())
+			if found {
+				info = Filter
+			} else {
+				info, _ = pffilter.FilterDhcp(msgType.String(), map[string]interface{}{
+					"mac":     p.CHAddr().String(),
+					"options": Options,
+				})
+				GlobalFilterCache.Set(p.CHAddr().String(), info, cache.DefaultExpiration)
+			}
+
 			answer.IP = dhcp.IPAdd(handler.start, free)
 			answer.Iface = h.intNet
 			// Add options on the fly
@@ -429,6 +439,16 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 				}
 			}
 
+			// Add options on the fly from pffilter
+			for key, value := range info.(map[string]interface{}) {
+				if s, ok := value.(string); ok {
+					var opcode dhcp.OptionCode
+					intvalue, _ := strconv.Atoi(key)
+					opcode = dhcp.OptionCode(intvalue)
+					GlobalOptions[opcode] = []byte("pop")
+					fmt.Printf("%q is a string: %q\n", key, s)
+				}
+			}
 			// Add device (mac) options on the fly
 			x, err = decodeOptions(p.CHAddr().String())
 			if err {
@@ -517,7 +537,8 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 						"mac":     p.CHAddr().String(),
 						"options": Options,
 					})
-					spew.Dump(info)
+					// Add options on the fly from pffilter
+
 					var GlobalOptions dhcp.Options
 					var options = make(map[dhcp.OptionCode][]byte)
 					for key, value := range handler.options {
@@ -553,6 +574,16 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 								continue
 							}
 							GlobalOptions[key] = value
+						}
+					}
+
+					// Add options on the fly from pffilter
+					for key, value := range info.(map[string]interface{}) {
+						if s, ok := value.(string); ok {
+							var opcode dhcp.OptionCode
+							intvalue, _ := strconv.Atoi(key)
+							opcode = dhcp.OptionCode(intvalue)
+							GlobalOptions[opcode] = Tlv.Tlvlist[int(opcode)].Transform.Encode(s)
 						}
 					}
 
