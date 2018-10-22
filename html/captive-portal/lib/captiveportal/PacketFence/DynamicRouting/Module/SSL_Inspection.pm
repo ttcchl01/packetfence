@@ -73,7 +73,8 @@ sub ios {
     my ($self) = @_;
 
     $self->render('ssl_inspection/ios.html', {
-         title => "iOS",
+        title => "iOS",
+	ssl_path => $self->ssl_path, 
     });
 }
 
@@ -87,7 +88,8 @@ sub android {
     my ($self) = @_;
 
     $self->render('ssl_inspection/android.html', {
-         title => "Android",
+        title => "Android",
+	ssl_path => $self->ssl_path, 
     });
 }
 
@@ -101,7 +103,8 @@ sub osx {
     my ($self) = @_;
 
     $self->render('ssl_inspection/osx.html', {
-         title => "OS X",
+        title => "OS X",
+	ssl_path => $self->ssl_path, 
     });
 }
 
@@ -115,7 +118,8 @@ sub windows {
     my ($self) = @_;
 
     $self->render('ssl_inspection/windows.html', {
-         title => "Windows",
+        title => "Windows",
+	ssl_path => $self->ssl_path, 
     });
 }
 
@@ -129,7 +133,8 @@ sub chrome {
     my ($self) = @_;
 
     $self->render('ssl_inspection/chrome.html', {
-         title => "Chrome OS",
+        title => "Chrome OS",
+	ssl_path => $self->ssl_path, 
     });
 }
 
@@ -143,7 +148,8 @@ sub firefox {
     my ($self) = @_;
 
     $self->render('ssl_inspection/firefox.html', {
-         title => "Firefox",
+        title => "Firefox",
+	ssl_path => $self->ssl_path, 
     });
 }
 
@@ -157,7 +163,8 @@ sub opera {
     my ($self) = @_;
 
     $self->render('ssl_inspection/opera.html', {
-         title => "Opera",
+        title => "Opera",
+	ssl_path => $self->ssl_path, 
     });
 }
 
@@ -171,7 +178,8 @@ sub unsupported {
     my ($self) = @_;
 
     $self->render('ssl_inspection/unsupported.html', {
-         title => "Unsupported platform",
+        title => "Unsupported platform",
+	ssl_path => $self->ssl_path, 
     });
 }
 

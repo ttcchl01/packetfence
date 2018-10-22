@@ -1,21 +1,20 @@
-<p>Test SSL Certificate</p>
+<script type="text/javascript" src="/content/release.js"></script>
+
 <div class="o-layout o-layout--center u-padding-bottom">
    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-	<input id="testSSL" type="button" value="Test SSL Certificate" />
-	<a id="test" type="button" class="btn btn-primary" data-toggle="modal" href="#testSSL">Test</a>
-	<div class="modal fade hide" id="testSSLcert">
-	  <div class="modal-header">
-	    <h3><i>[% l('Test SSL Certificate') %]</i> <span id="content"></span></h3>
-	  </div>
-	  <div class="modal-body">
- 	    hello
-	  </div>
-	  <div class="modal-footer">
-	    <a href="#" class="btn" data-dismiss="modal">[% l('OK') %]</a>
-	  </div>
-	</div>
+	<a id="test" type="button" class="c-btn c-btn--secondary c-btn--ghost u-1/1" href="#testSSL">Test Certificate</a>
    </div>
 </div>
+
+<div class="u-padding">
+
+  <div id="testSuccess" class="o-media o-media--notice u-padding u-margin-bottom hide">
+    <p class="o-media__body">[% i18n("Certificate test successful!") %] </p>
+  </div>
+
+  <div id="testFailure" class="o-media o-media--notice u-padding u-margin-bottom hide">
+    <p class="o-media__body">[% i18n("Certificate test failure. Please download the certificate and install it by following the instructions, or contact your administrator.") %] </p>
+  </div>
 
 <script language="Javascript">
   $("#testSSL").on('click', function() {
@@ -26,26 +25,18 @@
     )
   });
 
-
-    $('#test').on('click', function() {
-        var btn = $(this);
-        var href = btn.attr('href');
-        var modal = $('#testSSLcert');
-         if (valid) {
-            btn.button('loading');
-            $.ajax({
-                url: "https://packetfence.org"
-            })
-            .done(function() {
-		console.log('Success');
-                showSuccess('Test successful');
-            })
-            .fail(function() {
-	        console.log('Failed');
-                showPermanentError('Failed');
-            });
-        }
-        return false;
-    });
+  $('#test').on('click', function() {
+      $.ajax({ 
+          url: 'https://packetfence.org/ssl-test/', 
+          method: 'GET' 
+      })
+     .done(function() {
+          alert("It worked");
+     })
+     .fail(function() {
+          alert("It failed");
+     });
+     return false;
+  });
 
 </script>
