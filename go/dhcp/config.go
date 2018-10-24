@@ -225,9 +225,7 @@ func (d *Interfaces) readConfig() {
 							DHCPScope.xid = xid
 
 							initiaLease(&DHCPScope, ConfNet)
-							// ExcludeIP(&DHCPScope, ConfNet.IpReserved)
-							// DHCPScope.ipAssigned, _ = AssignIP(&DHCPScope, ConfNet.IpAssigned)
-							// DHCPScope.ipReserved = ConfNet.IpReserved
+
 							var options = make(map[dhcp.OptionCode][]byte)
 
 							options[dhcp.OptionSubnetMask] = []byte(DHCPNet.network.Mask)
@@ -287,9 +285,6 @@ func (d *Interfaces) readConfig() {
 						DHCPScope.xid = xid
 
 						initiaLease(&DHCPScope, ConfNet)
-						// ExcludeIP(&DHCPScope, ConfNet.IpReserved)
-						// DHCPScope.ipAssigned, _ = AssignIP(&DHCPScope, ConfNet.IpAssigned)
-						// DHCPScope.ipReserved = ConfNet.IpReserved
 
 						var options = make(map[dhcp.OptionCode][]byte)
 
