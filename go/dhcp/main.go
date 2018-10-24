@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/coreos/go-systemd/daemon"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/fdurand/arp"
 	cache "github.com/fdurand/go-cache"
 	_ "github.com/go-sql-driver/mysql"
@@ -281,6 +282,8 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 	// Do we have the vip ?
 
 	if VIP[h.Name] {
+
+		defer recoverName(options)
 
 		answer.Local = handler.layer2
 		pffilter := filter_client.NewClient()
@@ -686,4 +689,11 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 	}
 	return answer
 
+}
+
+func recoverName(options dhcp.Options) {
+	if r := recover(); r != nil {
+		fmt.Println("recovered from ", r)
+		spew.Dump(options)
+	}
 }
