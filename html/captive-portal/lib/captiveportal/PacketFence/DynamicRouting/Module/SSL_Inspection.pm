@@ -26,6 +26,8 @@ use pf::web::guest;
 use pf::util;
 use pf::node;
 use pf::constants;
+use fingerbank::Model::Device;
+use fingerbank::Model::User_Agent;
 
 has '+route_map' => (default => sub {
     tie my %map, 'Tie::IxHash', (
@@ -57,9 +59,23 @@ Present
 sub index {
     my ($self) = @_;
 
-    $self->render('ssl_inspection/index.html', {
-        title => "Download Certificate for your platform",
-    });
+    my $node_info = node_view($self->current_mac);
+    my $device_name = $node_info->{device_type};
+    
+    if($self->app->request->param('next')){
+        $self->done();
+        return;
+    }
+
+# Need check if Firefox or Opera browser first    
+    if ($self->app->current_user_agent =~ /Firefox/) { $self->firefox(); }
+    elsif ($self->app->current_user_agent =~ /OPR/) { $self->opera(); }
+    elsif (fingerbank::Model::Device->is_a($device_name, 'iOS')) { $self->ios(); }
+    elsif (fingerbank::Model::Device->is_a($device_name, 'Android OS')) { $self->android(); }
+    elsif (fingerbank::Model::Device->is_a($device_name, 'Mac OS X or macOS')) { $self->osx(); }
+    elsif (fingerbank::Model::Device->is_a($device_name, 'Windows OS')) { $self->windows(); }
+    elsif (fingerbank::Model::Device->is_a($device_name, 'Chrome OS')) { $self->chrome(); }
+    else { $self->unsupported(); }
 }
 
 
@@ -93,7 +109,7 @@ sub android {
     });
 }
 
-=head2 xos
+=head2 osx
 
 xos
 
@@ -182,6 +198,8 @@ sub unsupported {
 	ssl_path => $self->ssl_path, 
     });
 }
+
+
 
 =head1 AUTHOR
 

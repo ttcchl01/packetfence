@@ -1,4 +1,4 @@
-<script type="text/javascript" src="/content/release.js"></script>
+<script type="text/javascript" src="/content/sslinspection.js"></script>
 
 <div class="o-layout o-layout--center u-padding-bottom">
    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
@@ -7,36 +7,24 @@
 </div>
 
 <div class="u-padding">
-
-  <div id="testSuccess" class="o-media o-media--notice u-padding u-margin-bottom hide">
-    <p class="o-media__body">[% i18n("Certificate test successful!") %] </p>
-  </div>
-
-  <div id="testFailure" class="o-media o-media--notice u-padding u-margin-bottom hide">
-    <p class="o-media__body">[% i18n("Certificate test failure. Please download the certificate and install it by following the instructions, or contact your administrator.") %] </p>
+  <div id="testFailure" class="o-media o-media--error u-padding u-margin-bottom hide">
+    <div class="o-media__img">[% flashIcon(level='error') %]</div>
+    <p class="o-media__body">[% i18n("Certificate test failed. Please download the certificate and install it by following the instructions, or contact your administrator.") %] </p>
   </div>
 
 <script language="Javascript">
-  $("#testSSL").on('click', function() {
-    $.ajax({url: "https://packetfence.org"}).done(function(){
-      console.log('success');
-    }).fail(
-      function(){console.log("Failed")}
-    )
-  });
-
   $('#test').on('click', function() {
-      $.ajax({ 
-          url: 'https://packetfence.org/ssl-test/', 
-          method: 'GET' 
-      })
-     .done(function() {
-          alert("It worked");
-     })
-     .fail(function() {
-          alert("It failed");
-     });
-     return false;
+    $.ajax({ 
+      url: 'https://packetfence.org/ssl-test/', 
+      method: 'GET' 
+    })
+   .done(function() {
+      window.location.href = "/captive-portal?next=next";
+   })
+   .fail(function() {
+      testFailed();
+   });
+   return false;
   });
 
 </script>
