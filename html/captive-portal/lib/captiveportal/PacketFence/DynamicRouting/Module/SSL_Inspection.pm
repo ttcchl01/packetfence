@@ -27,7 +27,6 @@ use pf::util;
 use pf::node;
 use pf::constants;
 use fingerbank::Model::Device;
-use fingerbank::Model::User_Agent;
 
 has '+route_map' => (default => sub {
     tie my %map, 'Tie::IxHash', (
@@ -38,7 +37,7 @@ has '+route_map' => (default => sub {
         '/ssl_inspection/chrome' => \&chrome,
         '/ssl_inspection/firefox' => \&firefox,
         '/ssl_inspection/opera' => \&opera,
-        '/ssl_inspection/unsupported' => \&unsupported,
+        '/ssl_inspection/other' => \&other,
         # fallback to the index
         '/captive-portal' => \&index,
     );
@@ -67,7 +66,7 @@ sub index {
         return;
     }
 
-# Need check if Firefox or Opera browser first    
+# Check if Firefox or Opera browser first    
     if ($self->app->current_user_agent =~ /Firefox/) { $self->firefox(); }
     elsif ($self->app->current_user_agent =~ /OPR/) { $self->opera(); }
     elsif (fingerbank::Model::Device->is_a($device_name, 'iOS')) { $self->ios(); }
@@ -75,7 +74,7 @@ sub index {
     elsif (fingerbank::Model::Device->is_a($device_name, 'Mac OS X or macOS')) { $self->osx(); }
     elsif (fingerbank::Model::Device->is_a($device_name, 'Windows OS')) { $self->windows(); }
     elsif (fingerbank::Model::Device->is_a($device_name, 'Chrome OS')) { $self->chrome(); }
-    else { $self->unsupported(); }
+    else { $self->other(); }
 }
 
 
@@ -119,7 +118,7 @@ sub osx {
     my ($self) = @_;
 
     $self->render('ssl_inspection/osx.html', {
-        title => "OS X",
+        title => "macOS",
 	ssl_path => $self->ssl_path, 
     });
 }
@@ -184,17 +183,17 @@ sub opera {
     });
 }
 
-=head2 unsupported
+=head2 other
 
-unsupported
+other
 
 =cut
 
-sub unsupported {
+sub other {
     my ($self) = @_;
 
-    $self->render('ssl_inspection/unsupported.html', {
-        title => "Unsupported platform",
+    $self->render('ssl_inspection/other.html', {
+        title => "Other",
 	ssl_path => $self->ssl_path, 
     });
 }

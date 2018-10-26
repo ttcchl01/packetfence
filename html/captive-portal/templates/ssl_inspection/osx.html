@@ -1,54 +1,34 @@
 <!--Body container that sets layout and inner content-->
     
-
-<!--Top navigation menu bar-->
-
-                <nav>
-                    <ul class="o-list-inline o-layout--center caption">
-                       <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/ios">iOS</a></li>
-
-                       <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/android">Android</a></li>
-                       
-                       <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/windows">Windows</a></li>
-                       
-                       <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/chrome">Chrome OS</a></li>
-                       
-                       <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/firefox">Firefox</a></li>
-                       
-                       <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/opera">Opera</a></li>
-                       
-                       <li class="o-list-inline__item u-padding-horizontal-tiny"><a href="/ssl_inspection/unsupported">Unsupported</a></li>
-		    </ul>
-                </nav>
+<div class="u-padding">
+[% INCLUDE ssl_inspection/menu.html %]
                     
-                    
-                <div id="guide">
                     
                         <p>
                             [% i18n("This network employs a technology called captive portal which allows the administrator(s) to restrict network access to trusted users. In order to prevent certificate security warnings when accessing this portal, the network's filtering unit must issue to your computer or mobile device a file called an SSL certificate.") %]
                         </p>
 
                         <p>
-                       	    [% i18n("<strong>This guide will help you install the SSL filtering certificate for Mac-based browsers which use the operating system's built-in Keychain facility — this includes Safari and Chrome. This guide is not primarily for district owned Mac OSX computers.</strong>") | none %]
+                       	    [% i18n("<strong>This guide will help you install the SSL filtering certificate for browsers which use macOS built-in Keychain facility — this includes Safari and Chrome. This guide is not primarily for district owned macOS computers.</strong>") | none %]
 			</p>
                 
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>1</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>1</h3>
                 
                         <p>
-                            [% i18n("First, click the <i>Download Certificate</i> button below; this will download the certificate file to your computer.") | none %]
+                            [% i18n("Download the certificate to your device.") | none %]
                         </p>
                 
                         <div class="o-layout o-layout--center u-padding-bottom">
                             <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-        			<a href="[%ssl_path%]" class="c-btn c-btn--secondary c-btn--ghost u-1/1">[% i18n('Download Certificate') %]</a>
+        			<a href="[% ssl_path %]" class="c-btn c-btn--secondary c-btn--ghost u-1/1">[% i18n('Download Certificate') %]</a>
     			    </div>
 			</div>
 
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>2</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>2</h3>
                         
                        	<div class="o-layout o-layout--center u-padding-bottom">
                             <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx-01-downloads.png" alt="OS X Downloads icon" > 
+                                <img src="/common/ssl_inspection/osx-01-downloads.png" alt="[% i18n('OS X Downloads icon') %]" > 
                             </div>
                         </div>
                         
@@ -56,15 +36,20 @@
                             [% i18n("When the certificate finishes downloading, it will appear in your default Downloads folder. Usually, this can be accessed via the Dock near the Trash icon, or, depending on your browser, it may appear in a dedicated downloads window. Locate the file and click to open it.") %]
                         </p>
                         
-                        <p>
-                            [% i18n("(Note: You may not see exactly the same thing if you are using another browser or a different version of OS X; however, the general process and wording should be the same.)") %]
-                        </p>
+			<div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+                          <div class="o-media o-media--notice u-padding-small u-padding@tablet">
+                            <div class="o-media__img">[% flashIcon(level='notice', size='tiny') %]</div>
+                              <p class="o-media__body"> 
+                                [% i18n("Note: You may not see exactly the same thing if you are using another browser or a different version of macOS; however, the general process and wording should be the same.") %]
+                              </p>
+			  </div>
+			</div>
                         
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>3</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>3</h3>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx-04-system-access.png" alt="OS X Keychain Access prompt" >
+                                <img src="/common/ssl_inspection/osx-04-system-access.png" alt="[% i18n('OS X Keychain Access prompt') %]" >
                             </div>
                         </div>
                         
@@ -72,11 +57,11 @@
                               [% i18n("Opening the file will launch the Keychain Access application; here, you maybe asked whether to add the certifitcate to the login keychain or the System keychain. It is preferred if the certificate is added to the 'System' keychain in-case there are other users who might potentially login. Then click <i>Add</i>.") | none %]
                         </p>
 
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>4</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>4</h3>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx-05-type-password-2.png" alt="OS X Keychain Access prompt" >
+                                <img src="/common/ssl_inspection/osx-05-type-password-2.png" alt="[% i18n('OS X Keychain Access prompt') %]" >
                             </div>
                         </div>
                         
@@ -84,11 +69,11 @@
                                 [% i18n("Next, you might be prompted to enter in your login information to make the change. After entering your login information, click <i>Update Settings</i>.") | none %]
                         </p>
                         
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>5</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>5</h3>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx-02-keychain-access.png" alt="OS X Keychain Access prompt" >
+                                <img src="/common/ssl_inspection/osx-02-keychain-access.png" alt="[% i18n('OS X Keychain Access prompt') %]" >
                             </div>
                         </div>
                         
@@ -96,11 +81,11 @@
                                 [% i18n("Here, you will be asked whether to always trust Securly certificates. Click <i>Always Trust</i>.") | none %]
                         </p>
                         
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>6</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>6</h3>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx-03-type-password.png" alt="OS X password prompt" >
+                                <img src="/common/ssl_inspection/osx-03-type-password.png" alt="[% i18n('OS X password prompt') %]" >
                             </div>
                         </div>
                         
@@ -108,31 +93,41 @@
                                 [% i18n("Next, you will be prompted to enter the user name and password you use to log on to the computer; do so, and click <i>Modify Keychain</i>.") | none %]
                         </p>
                         
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>7</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>7</h3>
                         <p>
                                 [% i18n("You're done! After entering your password, you can close Keychain Access and continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.") %]
                         </p>
                         
-                        <h3> ***Note*** </h3>
+                        <h3> 
+			<div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+                          <div class="o-media o-media--notice u-padding-small u-padding@tablet">
+                            <div class="o-media__img">[% flashIcon(level='notice', size='tiny') %]</div>
+                              <p class="o-media__body">
+				***[% i18n('Note') %]*** 
+			      </p>
+			  </div>
+			</div>
+			</h3>
+
                         <p>
                         	[% i18n("If you did not see the prompts mentioned above you will need to manually "Trust" the newly installed certificate.") %]
                         </p>
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>A</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>A</h3>
                         <p>
                         	[% i18n("Open up Keychain Access. Finder > Applications > Utilities > Keychain Access") %]
                         </p>
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx/Applications-Utilities.png" alt="Applications-Utilities" >
+                                <img src="/common/ssl_inspection/osx/Applications-Utilities.png" alt="[% i18n('Applications-Utilities') %]" >
                             </div>
                         </div>
                         
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx/Utilities-KeychainAccess.png" alt="Utilities-KeychainAccess" >
+                                <img src="/common/ssl_inspection/osx/Utilities-KeychainAccess.png" alt="[% i18n('Utilities-KeychainAccess') %]" >
                             </div>
                          </div>  
-                         <h3 class="number"><span>[% i18n("Step ") %]</span>B</h3>   
+                         <h3 class="number"><span>[% i18n("Step") %] </span>B</h3>   
                             
                         <p>
                         	[% i18n('Make sure "System" selcted in the left column and then Double click on "Fireware HTTPS Proxy...."') %]
@@ -140,10 +135,10 @@
                             
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx/KeychainAccess-Fireware.png" alt="KeychainAccess-Fireware" >
+                                <img src="/common/ssl_inspection/osx/KeychainAccess-Fireware.png" alt="[% i18n('KeychainAccess-Fireware') %]" >
                             </div>
                         </div> 
-                         <h3 class="number"><span>[% i18n("Step ") %]</span>C</h3>
+                         <h3 class="number"><span>[% i18n("Step") %] </span>C</h3>
                             
                          <p>
                          	[% i18n('Make sure "Trust" is expanded and select the dropdown next to "When using this certificate:" and change it to "Always Trust"') %]
@@ -154,16 +149,16 @@
                             
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx/Fireware-NotTrusted.png" alt="Fireware-NotTrusted" >
+                                <img src="/common/ssl_inspection/osx/Fireware-NotTrusted.png" alt="[% i18n('Fireware-NotTrusted') %]" >
                             </div>
                         </div>
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx/Fireware-AlwaysTrust.png" alt="Fireware-AlwaysTrust" >
+                                <img src="/common/ssl_inspection/osx/Fireware-AlwaysTrust.png" alt="[% i18n('Fireware-AlwaysTrust') %]" >
                             </div>
                         </div>
 
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>D</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>D</h3>
                             
                         <p>
                         	[% i18n('You should now see a blue "+" right next to the certificate.') %]
@@ -171,10 +166,10 @@
                             
 			<div class="o-layout o-layout--center u-padding-bottom">
        			    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-                                <img src="/common/ssl_inspection/osx/Fireware-Trusted.png" alt="Fireware-Trusted" >
+                                <img src="/common/ssl_inspection/osx/Fireware-Trusted.png" alt="[% i18n('Fireware-Trusted') %]" >
                             </div>
                         </div>
-                        <h3 class="number"><span>[% i18n("Step ") %]</span>E</h3>
+                        <h3 class="number"><span>[% i18n("Step") %] </span>E</h3>
                           
                         <p>
                             [% i18n("You're done! You can close Keychain Access and continue browsing as usual; in most cases, you will not notice anything different after the certificate is installed.") %]
@@ -182,3 +177,4 @@
                             
                 </div>
 [% INCLUDE ssl_inspection/common.html %]
+</div>

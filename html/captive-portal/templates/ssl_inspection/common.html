@@ -1,5 +1,3 @@
-<script type="text/javascript" src="/content/sslinspection.js"></script>
-
 <div class="o-layout o-layout--center u-padding-bottom">
    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
 	<a id="test" type="button" class="c-btn c-btn--secondary c-btn--ghost u-1/1" href="#testSSL">Test Certificate</a>
@@ -25,6 +23,14 @@
       testFailed();
    });
    return false;
+  });
+
+  $(function() {
+    'use strict';
+  
+    window.testFailed = function() {
+      $('#testFailure').removeClass('hide');
+    };
   });
 
 </script>
