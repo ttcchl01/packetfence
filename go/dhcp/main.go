@@ -19,6 +19,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/fdurand/arp"
 	cache "github.com/fdurand/go-cache"
+	"github.com/go-errors/errors"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/goji/httpauth"
 	"github.com/gorilla/mux"
@@ -654,6 +655,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 
 func recoverName(options dhcp.Options) {
 	if r := recover(); r != nil {
+		fmt.Println(errors.Wrap(r, 2).ErrorStack())
 		fmt.Println("recovered from ", r)
 		spew.Dump(options)
 	}
