@@ -20,7 +20,6 @@ use pf::util;
 use pf::ConfigStore::Domain;
 
 has domains => ( is => 'rw', builder => '_build_domains');
-tie our %ConfigAuthenticationRadius, 'pfconfig::cached_hash', 'resource::authentication_sources_radius';
 
 ## Definition
 has_field 'id' =>
@@ -180,7 +179,7 @@ sub _build_domains {
 
 sub options_radius {
     my $self = shift;
-    my @radius = map { $_ => $_ } keys %ConfigAuthenticationRadius;
+    my @radius = map { $_ => $_ } keys %pf::config::ConfigAuthenticationRadius;
     unshift @radius, ("" => "");
     return @radius;
 }

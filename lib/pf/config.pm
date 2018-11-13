@@ -226,6 +226,7 @@ BEGIN {
         %ConfigSurvey
         %ConfigRoles
         %ConfigDeviceRegistration
+        %ConfigAuthenticationRadius
     );
 }
 
@@ -297,6 +298,8 @@ tie %ConfigSurvey, 'pfconfig::cached_hash', 'config::Survey';
 tie %ConfigRoles, 'pfconfig::cached_hash', 'config::Roles';
 
 tie %ConfigDeviceRegistration, 'pfconfig::cached_hash', 'config::DeviceRegistration';
+
+tie %ConfigAuthenticationRadius, 'pfconfig::cached_hash', 'resource::authentication_sources_radius';
 
 $thread = 0;
 
