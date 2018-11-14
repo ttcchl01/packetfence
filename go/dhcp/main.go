@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"strings"
-	"sync"
 
 	"context"
 	_ "expvar"
@@ -15,6 +14,7 @@ import (
 	"strconv"
 	"time"
 
+	"git.inverse.ca/inverse/fingerbank-collector/timedlock"
 	"github.com/coreos/go-systemd/daemon"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/fdurand/arp"
@@ -37,7 +37,7 @@ var GlobalIpCache *cache.Cache
 var GlobalMacCache *cache.Cache
 
 var GlobalTransactionCache *cache.Cache
-var GlobalTransactionLock *sync.Mutex
+var GlobalTransactionLock *timedlock.RWLock
 
 var RequestGlobalTransactionCache *cache.Cache
 
@@ -64,7 +64,7 @@ func main() {
 
 	// Initialize transaction cache
 	GlobalTransactionCache = cache.New(5*time.Minute, 10*time.Minute)
-	GlobalTransactionLock = &sync.Mutex{}
+	GlobalTransactionLock = timedlock.NewRWLock()
 	RequestGlobalTransactionCache = cache.New(5*time.Minute, 10*time.Minute)
 
 	// Read DB config
@@ -283,15 +283,15 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 
 		log.LoggerWContext(ctx).Debug(p.CHAddr().String() + " " + msgType.String() + " xID " + sharedutils.ByteToString(p.XId()))
 
-		GlobalTransactionLock.Lock()
+		id := GlobalTransactionLock.Lock()
 		cacheKey := p.CHAddr().String() + " " + msgType.String() + " xID " + sharedutils.ByteToString(p.XId())
 		if _, found := GlobalTransactionCache.Get(cacheKey); found {
 			log.LoggerWContext(ctx).Debug("Not answering to packet. Already in progress")
-			GlobalTransactionLock.Unlock()
+			GlobalTransactionLock.Unlock(id)
 			return answer
 		} else {
 			GlobalTransactionCache.Set(cacheKey, 1, time.Duration(1)*time.Second)
-			GlobalTransactionLock.Unlock()
+			GlobalTransactionLock.Unlock(id)
 		}
 
 		prettyType := "DHCP" + strings.ToUpper(msgType.String())
@@ -492,17 +492,17 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 							// Requested IP is equal to what we have in the cache ?
 
 							if dhcp.IPAdd(handler.start, index.(int)).Equal(reqIP) {
-								GlobalTransactionLock.Lock()
+								id := GlobalTransactionLock.Lock()
 								if _, found = RequestGlobalTransactionCache.Get(cacheKey); found {
 									log.LoggerWContext(ctx).Debug("Not answering to REQUEST. Already processed")
 									Reply = false
-									GlobalTransactionLock.Unlock()
+									GlobalTransactionLock.Unlock(id)
 									return answer
 								} else {
 									Reply = true
 									Index = index.(int)
 									RequestGlobalTransactionCache.Set(cacheKey, 1, time.Duration(1)*time.Second)
-									GlobalTransactionLock.Unlock()
+									GlobalTransactionLock.Unlock(id)
 								}
 								// So remove the ip from the cache
 							} else {
