@@ -284,6 +284,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 		log.LoggerWContext(ctx).Debug(p.CHAddr().String() + " " + msgType.String() + " xID " + sharedutils.ByteToString(p.XId()))
 
 		id := GlobalTransactionLock.Lock()
+
 		cacheKey := p.CHAddr().String() + " " + msgType.String() + " xID " + sharedutils.ByteToString(p.XId())
 		if _, found := GlobalTransactionCache.Get(cacheKey); found {
 			log.LoggerWContext(ctx).Debug("Not answering to packet. Already in progress")
