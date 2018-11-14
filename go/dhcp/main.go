@@ -14,7 +14,6 @@ import (
 	"strconv"
 	"time"
 
-	"git.inverse.ca/inverse/fingerbank-collector/timedlock"
 	"github.com/coreos/go-systemd/daemon"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/fdurand/arp"
@@ -26,6 +25,7 @@ import (
 	"github.com/inverse-inc/packetfence/go/log"
 	"github.com/inverse-inc/packetfence/go/pfconfigdriver"
 	"github.com/inverse-inc/packetfence/go/sharedutils"
+	"github.com/inverse-inc/packetfence/go/timedlock"
 	dhcp "github.com/krolaw/dhcp4"
 )
 
@@ -283,7 +283,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 
 		log.LoggerWContext(ctx).Debug(p.CHAddr().String() + " " + msgType.String() + " xID " + sharedutils.ByteToString(p.XId()))
 
-		id := GlobalTransactionLock.Lock()
+		id, _ := GlobalTransactionLock.Lock()
 
 		cacheKey := p.CHAddr().String() + " " + msgType.String() + " xID " + sharedutils.ByteToString(p.XId())
 		if _, found := GlobalTransactionCache.Get(cacheKey); found {
@@ -493,7 +493,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 							// Requested IP is equal to what we have in the cache ?
 
 							if dhcp.IPAdd(handler.start, index.(int)).Equal(reqIP) {
-								id := GlobalTransactionLock.Lock()
+								id, _ := GlobalTransactionLock.Lock()
 								if _, found = RequestGlobalTransactionCache.Get(cacheKey); found {
 									log.LoggerWContext(ctx).Debug("Not answering to REQUEST. Already processed")
 									Reply = false
