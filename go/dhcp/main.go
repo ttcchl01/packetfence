@@ -314,6 +314,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 			}
 			// Search in the cache if the mac address already get assigned
 			if x, found := handler.hwcache.Get(p.CHAddr().String()); found {
+				log.LoggerWContext(ctx).Debug("Found in the cache that a IP has already assigned")
 				free = x.(int)
 				// 5 seconds to send a request
 				err := handler.hwcache.Replace(p.CHAddr().String(), free, time.Duration(5)*time.Second)
