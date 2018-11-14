@@ -58,6 +58,22 @@ func (dp *DHCPPool) FreeIPIndex(index uint64) error {
 	}
 }
 
+// Check if the IP is free at the index
+func (dp *DHCPPool) IsFreeIPAtIndex(index uint64) bool {
+	dp.lock.Lock()
+	defer dp.lock.Unlock()
+
+	if !dp.IndexInPool(index) {
+		return false
+	}
+
+	if _, free := dp.free[index]; free {
+		return true
+	} else {
+		return false
+	}
+}
+
 // Returns a random free IP address, an error if the pool is full
 func (dp *DHCPPool) GetFreeIPIndex() (uint64, error) {
 	dp.lock.Lock()
