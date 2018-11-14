@@ -598,13 +598,16 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 						}
 					}
 				}
+				if x, found := handler.hwcache.Get(p.CHAddr().String()); found {
+					if leaseNum == x.(int) {
+						log.LoggerWContext(ctx).Debug(prettyType + "Found the ip " + reqIP.String() + "in the cache")
+						handler.hwcache.Set(p.CHAddr().String(), leaseNum, time.Duration(5)*time.Second)
+					} else {
+						log.LoggerWContext(ctx).Debug(prettyType + "Found the mac in the cache for but wrong IP")
+					}
+				}
 			}
 
-			if x, found := handler.hwcache.Get(p.CHAddr().String()); found {
-				go func(ctx context.Context, x int, reqIP net.IP) {
-					handler.hwcache.Delete(p.CHAddr().String())
-				}(ctx, x.(int), reqIP)
-			}
 			log.LoggerWContext(ctx).Info(prettyType + " of " + reqIP.String() + " from " + clientMac)
 
 			return answer
