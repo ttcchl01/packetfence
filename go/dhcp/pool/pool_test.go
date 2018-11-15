@@ -1,7 +1,6 @@
 package pool
 
 import (
-	"net"
 	"testing"
 )
 
@@ -11,7 +10,7 @@ func TestReserveIPIndex(t *testing.T) {
 
 	var err error
 
-	mac, err := net.ParseMAC("00:11:22:33:44:55")
+	mac := "00:11:22:33:44:55"
 
 	if err != nil {
 		t.Error("Not able to parse mac", err)
@@ -23,7 +22,7 @@ func TestReserveIPIndex(t *testing.T) {
 		if err != nil {
 			t.Error("Got an error and shouldn't have gotten one", err)
 		}
-		if returnedMac.String() != mac.String() {
+		if returnedMac != mac {
 			t.Error("Returned mac is not the same")
 		}
 
@@ -52,7 +51,7 @@ func TestFreeIPIndex(t *testing.T) {
 	dp := NewDHCPPool(cap)
 
 	var err error
-	mac, err := net.ParseMAC("00:11:22:33:44:55")
+	mac := "00:11:22:33:44:55"
 
 	if err != nil {
 		t.Error("Not able to parse mac", err)
@@ -96,7 +95,8 @@ func TestGetFreeIPIndex(t *testing.T) {
 	cap := uint64(1000)
 	dp := NewDHCPPool(cap)
 
-	mac, err := net.ParseMAC("00:11:22:33:44:55")
+	var err error
+	mac := "00:11:22:33:44:55"
 
 	if err != nil {
 		t.Error("Not able to parse mac", err)
@@ -163,7 +163,8 @@ func TestFreeIPsRemaining(t *testing.T) {
 	var expected uint64
 	var got uint64
 
-	mac, err := net.ParseMAC("00:11:22:33:44:55")
+	var err error
+	mac := "00:11:22:33:44:55"
 
 	if err != nil {
 		t.Error("Not able to parse mac", err)

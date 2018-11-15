@@ -3,14 +3,13 @@ package pool
 import (
 	"errors"
 	"math/rand"
-	"net"
 	"sync"
 )
 
 type DHCPPool struct {
 	lock     *sync.Mutex
 	free     map[uint64]bool
-	mac      map[uint64]net.HardwareAddr
+	mac      map[uint64]string
 	capacity uint64
 }
 
@@ -18,7 +17,7 @@ func NewDHCPPool(capacity uint64) *DHCPPool {
 	d := &DHCPPool{
 		lock:     &sync.Mutex{},
 		free:     make(map[uint64]bool),
-		mac:      make(map[uint64]net.HardwareAddr),
+		mac:      make(map[uint64]string),
 		capacity: capacity,
 	}
 	for i := uint64(0); i < d.capacity; i++ {
@@ -28,13 +27,12 @@ func NewDHCPPool(capacity uint64) *DHCPPool {
 }
 
 // Reserves an IP in the pool, returns an error if the IP has already been reserved
-func (dp *DHCPPool) ReserveIPIndex(index uint64, mac net.HardwareAddr) (error, net.HardwareAddr) {
+func (dp *DHCPPool) ReserveIPIndex(index uint64, mac string) (error, string) {
 	dp.lock.Lock()
 	defer dp.lock.Unlock()
 
-	emptyMac, _ := net.ParseMAC("00:00:00:00:00:00")
 	if index >= dp.capacity {
-		return errors.New("Trying to reserve an IP that is outside the capacity of this pool"), emptyMac
+		return errors.New("Trying to reserve an IP that is outside the capacity of this pool"), "00:00:00:00:00:00"
 	}
 
 	if _, free := dp.free[index]; free {
@@ -42,7 +40,7 @@ func (dp *DHCPPool) ReserveIPIndex(index uint64, mac net.HardwareAddr) (error, n
 		dp.mac[index] = mac
 		return nil, mac
 	} else {
-		return errors.New("IP is already reserved"), emptyMac
+		return errors.New("IP is already reserved"), "00:00:00:00:00:00"
 	}
 }
 
@@ -81,14 +79,12 @@ func (dp *DHCPPool) IsFreeIPAtIndex(index uint64) bool {
 }
 
 // Returns a random free IP address, an error if the pool is full
-func (dp *DHCPPool) GetFreeIPIndex(mac net.HardwareAddr) (uint64, net.HardwareAddr, error) {
+func (dp *DHCPPool) GetFreeIPIndex(mac string) (uint64, string, error) {
 	dp.lock.Lock()
 	defer dp.lock.Unlock()
 
-	emptyMac, _ := net.ParseMAC("00:00:00:00:00:00")
-
 	if len(dp.free) == 0 {
-		return 0, emptyMac, errors.New("DHCP pool is full")
+		return 0, "00:00:00:00:00:00", errors.New("DHCP pool is full")
 	}
 	index := rand.Intn(len(dp.free))
 
