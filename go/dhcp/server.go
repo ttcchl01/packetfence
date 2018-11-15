@@ -83,9 +83,9 @@ func Serve(conn ServeConn, handler Handler, jobs chan job, ctx context.Context) 
 		}()
 		select {
 		case <-jobs:
-			log.LoggerWContext(ctx).Debug("goroutine finished ")
+			log.LoggerWContext(ctx).Debug("goroutine finished correctly")
 		case <-time.After(1 * time.Second):
-			log.LoggerWContext(ctx).Debug("goroutine timed out ")
+			log.LoggerWContext(ctx).Error("goroutine timed out")
 		}
 	}
 }
