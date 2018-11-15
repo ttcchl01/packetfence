@@ -67,6 +67,12 @@ func initiaLease(dhcpHandler *DHCPHandler, ConfNet pfconfigdriver.RessourseNetwo
 				break
 			}
 		}
+		ip := net.ParseIP(ipstr)
+
+		// Calculate the position for the roaring bitmap
+		position := uint32(binary.BigEndian.Uint32(ip.To4())) - uint32(binary.BigEndian.Uint32(dhcpHandler.start.To4()))
+		// Remove the position in the roaming bitmap
+		dhcpHandler.available.ReserveIPIndex(uint64(position))
 		if found == false {
 			// Calculate the leasetime from the date in the database
 			now := time.Now()
@@ -76,12 +82,7 @@ func initiaLease(dhcpHandler *DHCPHandler, ConfNet pfconfigdriver.RessourseNetwo
 			} else {
 				leaseDuration = end_time.Sub(now)
 			}
-			ip := net.ParseIP(ipstr)
 
-			// Calculate the position for the roaring bitmap
-			position := uint32(binary.BigEndian.Uint32(ip.To4())) - uint32(binary.BigEndian.Uint32(dhcpHandler.start.To4()))
-			// Remove the position in the roaming bitmap
-			dhcpHandler.available.ReserveIPIndex(uint64(position))
 			// Add the mac in the cache
 			dhcpHandler.hwcache.Set(mac, int(position), leaseDuration)
 			GlobalIpCache.Set(ipstr, mac, leaseDuration)
@@ -100,7 +101,6 @@ func InterfaceScopeFromMac(MAC string) string {
 					NetWork = v.network[network].network.String()
 					if x, found := v.network[network].dhcpHandler.hwcache.Get(MAC); found {
 						v.network[network].dhcpHandler.hwcache.Replace(MAC, x.(int), 3*time.Second)
-						v.network[network].dhcpHandler.available.FreeIPIndex(uint64(x.(int)))
 						log.LoggerWContext(ctx).Info(MAC + " removed")
 					}
 				}
