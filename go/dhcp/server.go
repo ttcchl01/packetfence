@@ -3,9 +3,7 @@ package main
 import (
 	"context"
 	"net"
-	"time"
 
-	"github.com/inverse-inc/packetfence/go/log"
 	dhcp "github.com/krolaw/dhcp4"
 	"golang.org/x/net/ipv4"
 )
@@ -81,11 +79,11 @@ func Serve(conn ServeConn, handler Handler, jobs chan job, ctx context.Context) 
 		go func() {
 			jobs <- jobe
 		}()
-		select {
-		case <-jobs:
-			log.LoggerWContext(ctx).Debug("goroutine finished correctly")
-		case <-time.After(1 * time.Second):
-			log.LoggerWContext(ctx).Error("goroutine timed out")
-		}
+		// select {
+		// case <-jobs:
+		// 	log.LoggerWContext(ctx).Debug("goroutine finished correctly")
+		// case <-time.After(1 * time.Second):
+		// 	log.LoggerWContext(ctx).Error("goroutine timed out")
+		// }
 	}
 }
