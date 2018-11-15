@@ -343,13 +343,16 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 				// If we still haven't found an IP address to offer, we get the next one
 				if free == 0 {
 					log.LoggerWContext(ctx).Debug("Grabbing next available IP")
-					freeu64, err := handler.available.GetFreeIPIndex()
+					freeu64, returnedMac, err := handler.available.GetFreeIPIndex(p.CHAddr().String())
 
 					if err != nil {
 						log.LoggerWContext(ctx).Error("Unable to get free IP address, DHCP pool is full")
 						return answer
 					}
-
+					if returnedMac != p.CHAddr().String() {
+						log.LoggerWContext(ctx).Error("Reservation in the pool returned the wrong mac address")
+						goto retry
+					}
 					free = int(freeu64)
 				}
 
