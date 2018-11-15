@@ -3,12 +3,14 @@ package pool
 import (
 	"errors"
 	"math/rand"
+	"net"
 	"sync"
 )
 
 type DHCPPool struct {
 	lock     *sync.Mutex
 	free     map[uint64]bool
+	mac      map[uint64]net.HardwareAddr
 	capacity uint64
 }
 
@@ -16,6 +18,7 @@ func NewDHCPPool(capacity uint64) *DHCPPool {
 	d := &DHCPPool{
 		lock:     &sync.Mutex{},
 		free:     make(map[uint64]bool),
+		mac:      make(map[uint64]net.HardwareAddr),
 		capacity: capacity,
 	}
 	for i := uint64(0); i < d.capacity; i++ {
@@ -25,19 +28,21 @@ func NewDHCPPool(capacity uint64) *DHCPPool {
 }
 
 // Reserves an IP in the pool, returns an error if the IP has already been reserved
-func (dp *DHCPPool) ReserveIPIndex(index uint64) error {
+func (dp *DHCPPool) ReserveIPIndex(index uint64, mac net.HardwareAddr) (error, net.HardwareAddr) {
 	dp.lock.Lock()
 	defer dp.lock.Unlock()
 
+	emptyMac, _ := net.ParseMAC("00:00:00:00:00:00")
 	if index >= dp.capacity {
-		return errors.New("Trying to reserve an IP that is outside the capacity of this pool")
+		return errors.New("Trying to reserve an IP that is outside the capacity of this pool"), emptyMac
 	}
 
 	if _, free := dp.free[index]; free {
 		delete(dp.free, index)
-		return nil
+		dp.mac[index] = mac
+		return nil, mac
 	} else {
-		return errors.New("IP is already reserved")
+		return errors.New("IP is already reserved"), emptyMac
 	}
 }
 
@@ -54,6 +59,7 @@ func (dp *DHCPPool) FreeIPIndex(index uint64) error {
 		return errors.New("IP is already free")
 	} else {
 		dp.free[index] = true
+		delete(dp.mac, index)
 		return nil
 	}
 }
@@ -75,12 +81,14 @@ func (dp *DHCPPool) IsFreeIPAtIndex(index uint64) bool {
 }
 
 // Returns a random free IP address, an error if the pool is full
-func (dp *DHCPPool) GetFreeIPIndex() (uint64, error) {
+func (dp *DHCPPool) GetFreeIPIndex(mac net.HardwareAddr) (uint64, net.HardwareAddr, error) {
 	dp.lock.Lock()
 	defer dp.lock.Unlock()
 
+	emptyMac, _ := net.ParseMAC("00:00:00:00:00:00")
+
 	if len(dp.free) == 0 {
-		return 0, errors.New("DHCP pool is full")
+		return 0, emptyMac, errors.New("DHCP pool is full")
 	}
 	index := rand.Intn(len(dp.free))
 
@@ -93,8 +101,9 @@ func (dp *DHCPPool) GetFreeIPIndex() (uint64, error) {
 	}
 
 	delete(dp.free, available)
+	dp.mac[available] = mac
 
-	return available, nil
+	return available, mac, nil
 }
 
 // Returns whether or not a specific index is in the capacity of the pool
