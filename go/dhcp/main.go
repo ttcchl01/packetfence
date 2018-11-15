@@ -314,7 +314,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 			}
 			// Search in the cache if the mac address already get assigned
 			if x, found := handler.hwcache.Get(p.CHAddr().String()); found {
-				log.LoggerWContext(ctx).Debug("Found in the cache that a IP has already assigned")
+				log.LoggerWContext(ctx).Debug("Found in the cache that a IP has already been assigned")
 				free = x.(int)
 				// 5 seconds to send a request
 				err := handler.hwcache.Replace(p.CHAddr().String(), free, time.Duration(5)*time.Second)
@@ -332,7 +332,8 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 				if p.ParseOptions()[50] != nil && firstTry {
 					log.LoggerWContext(ctx).Debug("Attempting to use the IP requested by the device")
 					element = uint32(binary.BigEndian.Uint32(p.ParseOptions()[50])) - uint32(binary.BigEndian.Uint32(handler.start.To4()))
-					if handler.available.IsFreeIPAtIndex(uint64(element)) {
+					err := handler.available.FreeIPIndex(uint64(element))
+					if err == nil {
 						log.LoggerWContext(ctx).Debug("The IP asked by the device is available in the pool")
 						// Ip is available, return OFFER with this ip address
 						free = int(element)
@@ -630,9 +631,14 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 				}
 				// Remove the mac from the cache
 				if x, found := handler.hwcache.Get(p.CHAddr().String()); found {
-					go func(ctx context.Context, x int, reqIP net.IP) {
-						handler.hwcache.Delete(p.CHAddr().String())
-					}(ctx, x.(int), reqIP)
+					if leaseNum == x.(int) {
+						log.LoggerWContext(ctx).Debug(prettyType + "Found the ip " + reqIP.String() + "in the cache")
+						go func(ctx context.Context, x int, reqIP net.IP) {
+							handler.hwcache.Delete(p.CHAddr().String())
+						}(ctx, x.(int), reqIP)
+					} else {
+						log.LoggerWContext(ctx).Debug(prettyType + "Found the mac in the cache for but wrong IP")
+					}
 				}
 
 				log.LoggerWContext(ctx).Info("Temporarily declaring " + reqIP.String() + " as unusable")
