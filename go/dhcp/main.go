@@ -321,6 +321,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 					free = x.(int)
 					// The index is free use it
 				} else if returnedMac == "00:00:00:00:00:00" {
+					handler.hwcache.Delete(p.CHAddr().String())
 					err, returnedMac = handler.available.ReserveIPIndex(uint64(x.(int)), p.CHAddr().String())
 					// Reserve the ip
 					if err != nil && returnedMac == p.CHAddr().String() {
@@ -526,8 +527,13 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 									GlobalTransactionLock.Unlock(id)
 									return answer
 								} else {
-									Reply = true
-									Index = index.(int)
+									_, returnedMac, _ := handler.available.GetMACIndex(uint64(index.(int)))
+									if returnedMac == p.CHAddr().String() {
+										Reply = true
+										Index = index.(int)
+									} else {
+										Reply = false
+									}
 									RequestGlobalTransactionCache.Set(cacheKey, 1, time.Duration(1)*time.Second)
 									GlobalTransactionLock.Unlock(id)
 								}

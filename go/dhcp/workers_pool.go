@@ -17,7 +17,7 @@ type job struct {
 	localCtx context.Context
 }
 
-func doWork(id int, jobe job) job {
+func doWork(id int, jobe job) {
 	var ans Answer
 	if ans = jobe.handler.ServeDHCP(jobe.localCtx, jobe.p, jobe.msgType); ans.D != nil {
 		ipStr, _, _ := net.SplitHostPort(jobe.addr.String())
@@ -29,5 +29,4 @@ func doWork(id int, jobe job) job {
 			client.Close()
 		}
 	}
-	return jobe
 }
