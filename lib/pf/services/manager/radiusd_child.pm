@@ -453,41 +453,45 @@ sub generate_radiusd_eapconf {
 }
 
 =head2 generate_radiusd_sqlconf
+
 Generates the sql.conf configuration file
+
 =cut
 
 sub generate_radiusd_sqlconf {
-   my %tags;
+    my %tags;
 
-   $tags{'template'}    = "$conf_dir/radiusd/sql.conf";
-   $tags{'install_dir'} = $install_dir;
-   $tags{'db_host'} = $Config{'database'}{'host'};
-   $tags{'db_port'} = $Config{'database'}{'port'};
-   $tags{'db_database'} = $Config{'database'}{'db'};
-   $tags{'db_username'} = $Config{'database'}{'user'};
-   $tags{'db_password'} = $Config{'database'}{'pass'};
-   $tags{'hash_passwords'} = $Config{'advanced'}{'hash_passwords'} eq 'ntlm' ? 'NT-Password' : 'Cleartext-Password';
+    $tags{'template'}    = "$conf_dir/radiusd/sql.conf";
+    $tags{'install_dir'} = $install_dir;
+    $tags{'db_host'} = $Config{'database'}{'host'};
+    $tags{'db_port'} = $Config{'database'}{'port'};
+    $tags{'db_database'} = $Config{'database'}{'db'};
+    $tags{'db_username'} = $Config{'database'}{'user'};
+    $tags{'db_password'} = $Config{'database'}{'pass'};
+    $tags{'hash_passwords'} = $Config{'advanced'}{'hash_passwords'} eq 'ntlm' ? 'NT-Password' : 'Cleartext-Password';
 
-   parse_template( \%tags, "$conf_dir/radiusd/sql.conf", "$install_dir/raddb/mods-enabled/sql" );
+    parse_template( \%tags, "$conf_dir/radiusd/sql.conf", "$install_dir/raddb/mods-enabled/sql" );
 }
 
 =head2 generate_radiusd_ldap
+
 Generates the ldap_packetfence configuration file
+
 =cut
 
 sub generate_radiusd_ldap {
-   my ($self, $tt) = @_;
+    my ($self, $tt) = @_;
 
-   my %tags;
-   $tags{'template'}    = "$conf_dir/radiusd/ldap_packetfence.conf";
-   $tags{'install_dir'} = $install_dir;
-   foreach my $ldap (keys %ConfigAuthenticationLdap) {
-      my $searchattributes;
-      foreach my $searchattribute (@{$ConfigAuthenticationLdap{$ldap}->{searchattributes}}) {
-          $searchattributes .= '('.$searchattribute.'=%{User-Name})';
-      }
+    my %tags;
+    $tags{'template'}    = "$conf_dir/radiusd/ldap_packetfence.conf";
+    $tags{'install_dir'} = $install_dir;
+    foreach my $ldap (keys %ConfigAuthenticationLdap) {
+        my $searchattributes;
+        foreach my $searchattribute (@{$ConfigAuthenticationLdap{$ldap}->{searchattributes}}) {
+            $searchattributes .= '('.$searchattribute.'=%{User-Name})';
+        }
 
-      $tags{'servers'} .= <<"EOT";
+        $tags{'servers'} .= <<"EOT";
 
 ldap $ldap {
     server          = "$ConfigAuthenticationLdap{$ldap}->{host}"
@@ -511,17 +515,34 @@ ldap $ldap {
         chase_referrals = yes
         rebind = yes
     }
+EOT
+        if ($ConfigAuthenticationLdap{$ldap}->{encryption} eq "ldaps") {
+            $tags{'servers'} .= <<"EOT";
+    tls {
+        start_tls = no
+    }
+EOT
+        } elsif ($ConfigAuthenticationLdap{$ldap}->{encryption} eq "starttls") {
+            $tags{'servers'} .= <<"EOT";
+    tls {
+        start_tls = yes
+    }
+EOT
+        }
+            $tags{'servers'} .= <<"EOT";
 }
 
 EOT
 
-   }
+    }
 
-   parse_template( \%tags, "$conf_dir/radiusd/ldap_packetfence.conf", "$install_dir/raddb/mods-enabled/ldap_packetfence" );
+    parse_template( \%tags, "$conf_dir/radiusd/ldap_packetfence.conf", "$install_dir/raddb/mods-enabled/ldap_packetfence" );
 }
 
 =head2 generate_radiusd_proxy
+
 Generates the proxy.conf.inc configuration file
+
 =cut
 
 sub generate_radiusd_proxy {
