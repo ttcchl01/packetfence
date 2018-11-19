@@ -75,6 +75,7 @@ func main() {
 
 	MySQLdatabase.SetMaxIdleConns(0)
 	MySQLdatabase.SetMaxOpenConns(500)
+	MySQLdatabase.SetConnMaxLifetime(time.Second * 5)
 
 	VIP = make(map[string]bool)
 	VIPIp = make(map[string]net.IP)
