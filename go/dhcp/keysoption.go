@@ -16,6 +16,7 @@ func MysqlInsert(key string, value string) bool {
 
 func MysqlGet(key string) (string, string) {
 	row, err := MySQLdatabase.Query("select id, value from key_value_storage where id = ?", "/dhcpd/"+key)
+	defer row.Close()
 	if err != nil {
 		log.LoggerWContext(ctx).Debug("Error while getting MySQL '" + key + "': " + err.Error())
 		return "", ""
@@ -30,6 +31,7 @@ func MysqlGet(key string) (string, string) {
 			log.LoggerWContext(ctx).Crit(err.Error())
 		}
 	}
+
 	return Id, Value
 }
 
