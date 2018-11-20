@@ -127,7 +127,7 @@ func main() {
 		for net := range v.network {
 			net := net
 			go func() {
-				v.runUnicast(jobs, v.network[net].dhcpHandler.ip, ctx, v.DB)
+				v.runUnicast(jobs, v.network[net].dhcpHandler.ip, ctx)
 			}()
 
 			// We only need one listener per ip
@@ -139,7 +139,7 @@ func main() {
 	for _, v := range DHCPConfig.intsNet {
 		v := v
 		go func() {
-			v.run(jobs, ctx, v.DB)
+			v.run(jobs, ctx)
 		}()
 	}
 
@@ -176,18 +176,18 @@ func main() {
 }
 
 // Broadcast Listener
-func (h *Interface) run(jobs chan job, ctx context.Context, db *sql.DB) {
+func (h *Interface) run(jobs chan job, ctx context.Context) {
 
-	ListenAndServeIf(h.Name, h, jobs, ctx, db)
+	ListenAndServeIf(h.Name, h, jobs, ctx)
 }
 
 // Unicast listener
-func (h *Interface) runUnicast(jobs chan job, ip net.IP, ctx context.Context, db *sql.DB) {
+func (h *Interface) runUnicast(jobs chan job, ip net.IP, ctx context.Context) {
 
-	ListenAndServeIfUnicast(h.Name, h, jobs, ip, ctx, db)
+	ListenAndServeIfUnicast(h.Name, h, jobs, ip, ctx)
 }
 
-func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.MessageType, db *sql.DB) (answer Answer) {
+func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.MessageType) (answer Answer) {
 
 	var handler DHCPHandler
 	var NetScope net.IPNet
@@ -195,7 +195,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 	answer.MAC = p.CHAddr()
 	answer.SrcIP = h.Ipv4
 	answer.Iface = h.intNet
-
+	db := intNametoInterface[answer.Iface.Name].DB
 	ctx = log.AddToLogContext(ctx, "mac", answer.MAC.String())
 
 	// Detect the handler to use (config)
