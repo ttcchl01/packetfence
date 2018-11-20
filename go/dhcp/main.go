@@ -20,8 +20,6 @@ import (
 	cache "github.com/fdurand/go-cache"
 	"github.com/go-errors/errors"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/goji/httpauth"
-	"github.com/gorilla/mux"
 	"github.com/inverse-inc/packetfence/go/log"
 	"github.com/inverse-inc/packetfence/go/pfconfigdriver"
 	"github.com/inverse-inc/packetfence/go/sharedutils"
@@ -140,29 +138,6 @@ func main() {
 		}()
 	}
 
-	// Api
-	router := mux.NewRouter()
-	router.HandleFunc("/api/v1/dhcp/mac/{mac:(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}}", handleMac2Ip).Methods("GET")
-	router.HandleFunc("/api/v1/dhcp/mac/{mac:(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}}", handleReleaseIP).Methods("DELETE")
-	router.HandleFunc("/api/v1/dhcp/ip/{ip:(?:[0-9]{1,3}.){3}(?:[0-9]{1,3})}", handleIP2Mac).Methods("GET")
-	router.HandleFunc("/api/v1/dhcp/stats", handleAllStats).Methods("GET")
-	router.HandleFunc("/api/v1/dhcp/stats/{int:.*}/{network:(?:[0-9]{1,3}.){3}(?:[0-9]{1,3})}", handleStats).Methods("GET")
-	router.HandleFunc("/api/v1/dhcp/stats/{int:.*}", handleStats).Methods("GET")
-	router.HandleFunc("/api/v1/dhcp/debug/{int:.*}/{role:(?:[^/]*)}", handleDebug).Methods("GET")
-	router.HandleFunc("/api/v1/dhcp/options/network/{network:(?:[0-9]{1,3}.){3}(?:[0-9]{1,3})}", handleOverrideNetworkOptions).Methods("POST")
-	router.HandleFunc("/api/v1/dhcp/options/network/{network:(?:[0-9]{1,3}.){3}(?:[0-9]{1,3})}", handleRemoveNetworkOptions).Methods("DELETE")
-	router.HandleFunc("/api/v1/dhcp/options/mac/{mac:(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}}", handleOverrideOptions).Methods("POST")
-	router.HandleFunc("/api/v1/dhcp/options/mac/{mac:(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}}", handleRemoveOptions).Methods("DELETE")
-	http.Handle("/", httpauth.SimpleBasicAuth(webservices.User, webservices.Pass)(router))
-
-	srv := &http.Server{
-		Addr:         "127.0.0.1:22222",
-		IdleTimeout:  5 * time.Second,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		Handler:      router,
-	}
-
 	// Systemd
 	daemon.SdNotify(false, "READY=1")
 
@@ -189,7 +164,10 @@ func main() {
 			time.Sleep(interval / 3)
 		}
 	}()
-	srv.ListenAndServe()
+	a := App{}
+	a.Initialize(configDatabase)
+	a.Run()
+
 }
 
 // Broadcast Listener
