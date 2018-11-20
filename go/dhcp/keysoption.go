@@ -1,11 +1,13 @@
 package main
 
 import (
+	"database/sql"
+
 	"github.com/inverse-inc/packetfence/go/log"
 )
 
-func MysqlInsert(key string, value string) bool {
-	_, err := MySQLdatabase.Query("replace into key_value_storage values(?,?)", "/dhcpd/"+key, value)
+func MysqlInsert(key string, value string, db *sql.DB) bool {
+	_, err := db.Query("replace into key_value_storage values(?,?)", "/dhcpd/"+key, value)
 	if err != nil {
 		log.LoggerWContext(ctx).Error("Error while inserting into MySQL: " + err.Error())
 		return false
@@ -14,8 +16,8 @@ func MysqlInsert(key string, value string) bool {
 	}
 }
 
-func MysqlGet(key string) (string, string) {
-	row, err := MySQLdatabase.Query("select id, value from key_value_storage where id = ?", "/dhcpd/"+key)
+func MysqlGet(key string, db *sql.DB) (string, string) {
+	row, err := db.Query("select id, value from key_value_storage where id = ?", "/dhcpd/"+key)
 	defer row.Close()
 	if err != nil {
 		log.LoggerWContext(ctx).Debug("Error while getting MySQL '" + key + "': " + err.Error())
@@ -35,8 +37,8 @@ func MysqlGet(key string) (string, string) {
 	return Id, Value
 }
 
-func MysqlDel(key string) bool {
-	_, err := MySQLdatabase.Query("delete from key_value_storage where id = ?", "/dhcpd/"+key)
+func MysqlDel(key string, db *sql.DB) bool {
+	_, err := db.Query("delete from key_value_storage where id = ?", "/dhcpd/"+key)
 	if err != nil {
 		log.LoggerWContext(ctx).Error("Error while deleting MySQL key '" + key + "': " + err.Error())
 		return false

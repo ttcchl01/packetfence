@@ -66,7 +66,7 @@ type Info struct {
 	Network string `json:"network,omitempty"`
 }
 
-func handleIP2Mac(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleIP2Mac(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
 	if index, expiresAt, found := GlobalIpCache.GetWithExpiration(vars["ip"]); found {
@@ -86,7 +86,7 @@ func handleIP2Mac(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func handleMac2Ip(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleMac2Ip(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
 	if index, expiresAt, found := GlobalMacCache.GetWithExpiration(vars["mac"]); found {
@@ -106,7 +106,7 @@ func handleMac2Ip(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func handleAllStats(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleAllStats(res http.ResponseWriter, req *http.Request) {
 	var result Items
 	var interfaces pfconfigdriver.ListenInts
 	pfconfigdriver.FetchDecodeSocket(ctx, &interfaces)
@@ -135,7 +135,7 @@ func handleAllStats(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func handleStats(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleStats(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
 	if h, ok := intNametoInterface[vars["int"]]; ok {
@@ -156,7 +156,7 @@ func handleStats(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func handleDebug(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleDebug(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
 	if h, ok := intNametoInterface[vars["int"]]; ok {
@@ -176,7 +176,7 @@ func handleDebug(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func handleReleaseIP(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleReleaseIP(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	_ = InterfaceScopeFromMac(vars["mac"])
 
@@ -189,7 +189,7 @@ func handleReleaseIP(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func handleOverrideOptions(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleOverrideOptions(res http.ResponseWriter, req *http.Request) {
 
 	vars := mux.Vars(req)
 
@@ -202,7 +202,7 @@ func handleOverrideOptions(res http.ResponseWriter, req *http.Request) {
 	}
 
 	// Insert information in MySQL
-	_ = MysqlInsert(vars["mac"], sharedutils.ConvertToString(body))
+	_ = MysqlInsert(vars["mac"], sharedutils.ConvertToString(body), a.DB)
 
 	var result = &Info{Mac: vars["mac"], Status: "ACK"}
 
@@ -213,7 +213,7 @@ func handleOverrideOptions(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func handleOverrideNetworkOptions(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleOverrideNetworkOptions(res http.ResponseWriter, req *http.Request) {
 
 	vars := mux.Vars(req)
 
@@ -226,7 +226,7 @@ func handleOverrideNetworkOptions(res http.ResponseWriter, req *http.Request) {
 	}
 
 	// Insert information in MySQL
-	_ = MysqlInsert(vars["network"], sharedutils.ConvertToString(body))
+	_ = MysqlInsert(vars["network"], sharedutils.ConvertToString(body), a.DB)
 
 	var result = &Info{Network: vars["network"], Status: "ACK"}
 
@@ -237,13 +237,13 @@ func handleOverrideNetworkOptions(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func handleRemoveOptions(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleRemoveOptions(res http.ResponseWriter, req *http.Request) {
 
 	vars := mux.Vars(req)
 
 	var result = &Info{Mac: vars["mac"], Status: "ACK"}
 
-	err := MysqlDel(vars["mac"])
+	err := MysqlDel(vars["mac"], a.DB)
 	if !err {
 		result = &Info{Mac: vars["mac"], Status: "NAK"}
 	}
@@ -254,13 +254,13 @@ func handleRemoveOptions(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func handleRemoveNetworkOptions(res http.ResponseWriter, req *http.Request) {
+func (a *App) handleRemoveNetworkOptions(res http.ResponseWriter, req *http.Request) {
 
 	vars := mux.Vars(req)
 
 	var result = &Info{Network: vars["network"], Status: "ACK"}
 
-	err := MysqlDel(vars["network"])
+	err := MysqlDel(vars["network"], a.DB)
 	if !err {
 		result = &Info{Network: vars["network"], Status: "NAK"}
 	}
@@ -271,9 +271,9 @@ func handleRemoveNetworkOptions(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func decodeOptions(b string) (map[dhcp.OptionCode][]byte, bool) {
+func (h *Interface) decodeOptions(b string) (map[dhcp.OptionCode][]byte, bool) {
 	var options []Options
-	_, value := MysqlGet(b)
+	_, value := MysqlGet(b, h.DB)
 	decodedValue := sharedutils.ConvertToByte(value)
 	var dhcpOptions = make(map[dhcp.OptionCode][]byte)
 	if err := json.Unmarshal(decodedValue, &options); err != nil {
@@ -318,7 +318,7 @@ func (h *Interface) handleApiReq(Request ApiReq) interface{} {
 			}
 
 			// Add network options on the fly
-			x, err := decodeOptions(v.network.IP.String())
+			x, err := h.decodeOptions(v.network.IP.String())
 			if err {
 				for key, value := range x {
 					Options[key.String()] = Tlv.Tlvlist[int(key)].Decode.String(value)

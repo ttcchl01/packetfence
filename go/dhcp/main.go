@@ -69,11 +69,12 @@ func main() {
 	pfconfigdriver.PfconfigPool.AddStruct(ctx, &pfconfigdriver.Config.PfConf.Database)
 	configDatabase := pfconfigdriver.Config.PfConf.Database
 
+	// Mysql connection for the configuration
 	connectDB(configDatabase)
 
 	MySQLdatabase.SetMaxIdleConns(0)
 	MySQLdatabase.SetMaxOpenConns(500)
-	MySQLdatabase.SetConnMaxLifetime(time.Second * 5)
+	// MySQLdatabase.SetConnMaxLifetime(time.Second * 5)
 
 	VIP = make(map[string]bool)
 	VIPIp = make(map[string]net.IP)
@@ -90,6 +91,7 @@ func main() {
 
 	// Read pfconfig
 	DHCPConfig = newDHCPConfig()
+
 	DHCPConfig.readConfig()
 	pfconfigdriver.PfconfigPool.AddStruct(ctx, &pfconfigdriver.Config.PfConf.Webservices)
 	webservices = pfconfigdriver.Config.PfConf.Webservices
@@ -117,6 +119,9 @@ func main() {
 	// Unicast listener
 	for _, v := range DHCPConfig.intsNet {
 		v := v
+		v.Initialize(configDatabase)
+		v.DB.SetMaxIdleConns(0)
+		v.DB.SetMaxOpenConns(500)
 		// Create a channel for each interfaces
 		intNametoInterface[v.Name] = &v
 		for net := range v.network {
@@ -422,7 +427,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 			leaseDuration := handler.leaseDuration
 
 			// Add network options on the fly
-			x, err := decodeOptions(NetScope.IP.String())
+			x, err := h.decodeOptions(NetScope.IP.String())
 			if err {
 				for key, value := range x {
 					if key == dhcp.OptionIPAddressLeaseTime {
@@ -435,7 +440,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 			}
 
 			// Add device (mac) options on the fly
-			x, err = decodeOptions(p.CHAddr().String())
+			x, err = h.decodeOptions(p.CHAddr().String())
 			if err {
 				for key, value := range x {
 					if key == dhcp.OptionIPAddressLeaseTime {
@@ -553,7 +558,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 					leaseDuration := handler.leaseDuration
 
 					// Add network options on the fly
-					x, err := decodeOptions(NetScope.IP.String())
+					x, err := h.decodeOptions(NetScope.IP.String())
 					if err {
 						for key, value := range x {
 							if key == dhcp.OptionIPAddressLeaseTime {
@@ -566,7 +571,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 					}
 
 					// Add devices options on the fly
-					x, err = decodeOptions(p.CHAddr().String())
+					x, err = h.decodeOptions(p.CHAddr().String())
 					if err {
 						for key, value := range x {
 							if key == dhcp.OptionIPAddressLeaseTime {

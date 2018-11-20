@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/binary"
 	"math"
 	"net"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	cache "github.com/fdurand/go-cache"
+	"github.com/inverse-inc/packetfence/go/db"
 	"github.com/inverse-inc/packetfence/go/dhcp/pool"
 	"github.com/inverse-inc/packetfence/go/log"
 	"github.com/inverse-inc/packetfence/go/pfconfigdriver"
@@ -43,6 +45,7 @@ type Interface struct {
 	layer2  []*net.IPNet
 	Ipv4    net.IP
 	Ipv6    net.IP
+	DB      *sql.DB
 }
 
 type Network struct {
@@ -54,6 +57,13 @@ type Network struct {
 func newDHCPConfig() *Interfaces {
 	var p Interfaces
 	return &p
+}
+
+func (d *Interface) Initialize(configDatabase pfconfigdriver.PfConfDatabase) {
+	options := "timeout=90s&readTimeout=30s"
+	var err error
+	d.DB, err = db.DbFromConfig(ctx, options)
+	sharedutils.CheckError(err)
 }
 
 func (d *Interfaces) readConfig() {
@@ -149,6 +159,7 @@ func (d *Interfaces) readConfig() {
 							} else {
 								Role, Roles = Roles[len(Roles)-1], Roles[:len(Roles)-1]
 							}
+
 							DHCPScope.role = Role
 							DHCPNet.splittednet = true
 
@@ -224,7 +235,7 @@ func (d *Interfaces) readConfig() {
 
 							DHCPScope.xid = xid
 
-							initiaLease(&DHCPScope, ConfNet)
+							initiaLease(&DHCPScope, ConfNet, MySQLdatabase)
 
 							var options = make(map[dhcp.OptionCode][]byte)
 
@@ -284,7 +295,7 @@ func (d *Interfaces) readConfig() {
 
 						DHCPScope.xid = xid
 
-						initiaLease(&DHCPScope, ConfNet)
+						initiaLease(&DHCPScope, ConfNet, MySQLdatabase)
 
 						var options = make(map[dhcp.OptionCode][]byte)
 
