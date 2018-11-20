@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	_ "expvar"
 	"net"
 
@@ -15,11 +16,12 @@ type job struct {
 	addr     net.Addr
 	dst      net.IP
 	localCtx context.Context
+	db       *sql.DB
 }
 
 func doWork(id int, jobe job) {
 	var ans Answer
-	if ans = jobe.handler.ServeDHCP(jobe.localCtx, jobe.p, jobe.msgType); ans.D != nil {
+	if ans = jobe.handler.ServeDHCP(jobe.localCtx, jobe.p, jobe.msgType, jobe.db); ans.D != nil {
 		ipStr, _, _ := net.SplitHostPort(jobe.addr.String())
 		if !(jobe.p.GIAddr().Equal(net.IPv4zero) && net.ParseIP(ipStr).Equal(net.IPv4zero)) {
 			sendUnicastDHCP(ans.D, jobe.addr, jobe.dst, jobe.p.GIAddr(), true)

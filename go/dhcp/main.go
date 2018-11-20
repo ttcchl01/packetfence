@@ -127,7 +127,7 @@ func main() {
 		for net := range v.network {
 			net := net
 			go func() {
-				v.runUnicast(jobs, v.network[net].dhcpHandler.ip, ctx)
+				v.runUnicast(jobs, v.network[net].dhcpHandler.ip, ctx, v.DB)
 			}()
 
 			// We only need one listener per ip
@@ -139,7 +139,7 @@ func main() {
 	for _, v := range DHCPConfig.intsNet {
 		v := v
 		go func() {
-			v.run(jobs, ctx)
+			v.run(jobs, ctx, v.DB)
 		}()
 	}
 
@@ -176,18 +176,18 @@ func main() {
 }
 
 // Broadcast Listener
-func (h *Interface) run(jobs chan job, ctx context.Context) {
+func (h *Interface) run(jobs chan job, ctx context.Context, db *sql.DB) {
 
-	ListenAndServeIf(h.Name, h, jobs, ctx)
+	ListenAndServeIf(h.Name, h, jobs, ctx, db)
 }
 
 // Unicast listener
-func (h *Interface) runUnicast(jobs chan job, ip net.IP, ctx context.Context) {
+func (h *Interface) runUnicast(jobs chan job, ip net.IP, ctx context.Context, db *sql.DB) {
 
-	ListenAndServeIfUnicast(h.Name, h, jobs, ip, ctx)
+	ListenAndServeIfUnicast(h.Name, h, jobs, ip, ctx, db)
 }
 
-func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.MessageType) (answer Answer) {
+func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.MessageType, db *sql.DB) (answer Answer) {
 
 	var handler DHCPHandler
 	var NetScope net.IPNet
@@ -425,9 +425,8 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 			}
 			GlobalOptions = options
 			leaseDuration := handler.leaseDuration
-
 			// Add network options on the fly
-			x, err := h.decodeOptions(NetScope.IP.String())
+			x, err := decodeOptions(NetScope.IP.String(), db)
 			if err {
 				for key, value := range x {
 					if key == dhcp.OptionIPAddressLeaseTime {
@@ -440,7 +439,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 			}
 
 			// Add device (mac) options on the fly
-			x, err = h.decodeOptions(p.CHAddr().String())
+			x, err = decodeOptions(p.CHAddr().String(), db)
 			if err {
 				for key, value := range x {
 					if key == dhcp.OptionIPAddressLeaseTime {
@@ -558,7 +557,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 					leaseDuration := handler.leaseDuration
 
 					// Add network options on the fly
-					x, err := h.decodeOptions(NetScope.IP.String())
+					x, err := decodeOptions(NetScope.IP.String(), db)
 					if err {
 						for key, value := range x {
 							if key == dhcp.OptionIPAddressLeaseTime {
@@ -571,7 +570,7 @@ func (h *Interface) ServeDHCP(ctx context.Context, p dhcp.Packet, msgType dhcp.M
 					}
 
 					// Add devices options on the fly
-					x, err = h.decodeOptions(p.CHAddr().String())
+					x, err = decodeOptions(p.CHAddr().String(), db)
 					if err {
 						for key, value := range x {
 							if key == dhcp.OptionIPAddressLeaseTime {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"net"
 
 	dhcp "github.com/krolaw/dhcp4"
@@ -18,7 +19,7 @@ type Answer struct {
 }
 
 type Handler interface {
-	ServeDHCP(ctx context.Context, req dhcp.Packet, msgType dhcp.MessageType) Answer
+	ServeDHCP(ctx context.Context, req dhcp.Packet, msgType dhcp.MessageType, db *sql.DB) Answer
 }
 
 // ServeConn is the bare minimum connection functions required by Serve()
@@ -43,7 +44,7 @@ type ServeConn interface {
 // Additionally, response packets may not return to the same
 // interface that the request was received from.  Writing a custom ServeConn,
 // or using ServeIf() can provide a workaround to this problem.
-func Serve(conn ServeConn, handler Handler, jobs chan job, ctx context.Context) error {
+func Serve(conn ServeConn, handler Handler, jobs chan job, ctx context.Context, db *sql.DB) error {
 
 	buffer := make([]byte, 1500)
 
@@ -75,15 +76,10 @@ func Serve(conn ServeConn, handler Handler, jobs chan job, ctx context.Context) 
 		}
 		var dhcprequest dhcp.Packet
 		dhcprequest = append([]byte(nil), req...)
-		jobe := job{dhcprequest, reqType, handler, addr, cm.Dst, ctx}
+		jobe := job{dhcprequest, reqType, handler, addr, cm.Dst, ctx, db}
 		go func() {
 			jobs <- jobe
 		}()
-		// select {
-		// case <-jobs:
-		// 	log.LoggerWContext(ctx).Debug("goroutine finished correctly")
-		// case <-time.After(1 * time.Second):
-		// 	log.LoggerWContext(ctx).Error("goroutine timed out")
-		// }
+
 	}
 }
