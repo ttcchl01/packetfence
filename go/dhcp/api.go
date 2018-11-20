@@ -299,7 +299,7 @@ func decodeOptions(b string, db *sql.DB) (map[dhcp.OptionCode][]byte, bool) {
 
 func (h *Interface) handleApiReq(Request ApiReq) interface{} {
 	var stats []Stats
-
+	db := intNametoInterface[h.intNet.Name].DB
 	// Send back stats
 	if Request.Req == "stats" {
 		for _, v := range h.network {
@@ -319,12 +319,12 @@ func (h *Interface) handleApiReq(Request ApiReq) interface{} {
 			}
 
 			// Add network options on the fly
-			// x, err := decodeOptions(v.network.IP.String())
-			// if err {
-			// for key, value := range x {
-			// Options[key.String()] = Tlv.Tlvlist[int(key)].Decode.String(value)
-			// }
-			// }
+			x, err := decodeOptions(v.network.IP.String(), db)
+			if err {
+				for key, value := range x {
+					Options[key.String()] = Tlv.Tlvlist[int(key)].Decode.String(value)
+				}
+			}
 
 			var Members []Node
 			id, _ := GlobalTransactionLock.Lock()
