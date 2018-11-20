@@ -1,7 +1,7 @@
 import i18n from '@/utils/locale'
-import { pfRegExp as regExp } from '@/globals/pfRegExp'
 import { pfSearchConditionType as conditionType } from '@/globals/pfSearch'
 import pfFormChosen from '@/components/pfFormChosen'
+import pfFormConfigurationRules from '@/components/pfFormConfigurationRules'
 import pfFormInput from '@/components/pfFormInput'
 import pfFormPassword from '@/components/pfFormPassword'
 import pfFormSelect from '@/components/pfFormSelect'
@@ -11,16 +11,30 @@ import {
   and,
   not,
   conditional,
+  compareDate,
+  isDateFormat,
   isFQDN,
   isPort,
-  sourceExists
+  sourceExists,
+  requireAllSiblingFieldTypes,
+  requireAnySiblingFieldTypes,
+  restrictAllSiblingFieldTypes,
+  limitSiblingFieldTypes
 } from '@/globals/pfValidators'
+import { pfDatabaseSchema as schema } from '@/globals/pfDatabaseSchema'
+import { pfFieldType as fieldType } from '@/globals/pfField'
+import { pfRegExp as regExp } from '@/globals/pfRegExp'
+import bytes from '@/utils/bytes'
+
 const {
   required,
   alphaNum,
   integer,
+  numeric,
   macAddress,
-  ipAddress
+  ipAddress,
+  minValue,
+  maxValue
 } = require('vuelidate/lib/validators')
 
 export const pfConfigurationListColumns = {
@@ -309,13 +323,24 @@ export const pfConfigurationViewFields = {
       }
     ]
   },
-  administration_rules: {
-    label: i18n.t('Administration Rules'),
-    fields: [
-      {
-        text: 'TODO'
-      }
-    ]
+  administration_rules: ({ isNew = false, isClone = false } = {}) => {
+    return {
+      label: i18n.t('Administration Rules'),
+      fields: [
+        {
+          key: 'administration_rules',
+          component: pfFormConfigurationRules,
+          attrs: {
+            actions: [
+              pfConfigurationActions.set_access_level,
+              pfConfigurationActions.mark_as_sponsor,
+              pfConfigurationActions.set_tenant_id
+            ],
+            collapse: !isNew || isClone
+          }
+        }
+      ]
+    }
   },
   allow_localdomain: {
     label: i18n.t('Allow Local Domain'),
@@ -414,13 +439,26 @@ export const pfConfigurationViewFields = {
       }
     ]
   },
-  authentication_rules: {
-    label: i18n.t('Authorization Rules'),
-    fields: [
-      {
-        text: 'TODO'
-      }
-    ]
+  authentication_rules: ({ isNew = false, isClone = false } = {}) => {
+    return {
+      label: i18n.t('Authentication Rules'),
+      fields: [
+        {
+          key: 'authentication_rules',
+          component: pfFormConfigurationRules,
+          attrs: {
+            actions: [
+              pfConfigurationActions.set_role_by_name,
+              pfConfigurationActions.set_access_duration,
+              pfConfigurationActions.set_unreg_date,
+              pfConfigurationActions.set_time_balance,
+              pfConfigurationActions.set_bandwidth_balance
+            ],
+            collapse: !isNew || isClone
+          }
+        }
+      ]
+    }
   },
   authorization_source_id: ({ sources = [] } = {}) => {
     return {
@@ -1789,16 +1827,16 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.monitor,
         pfConfigurationViewFields.shuffle,
         pfConfigurationViewFields.realms(args),
-        pfConfigurationViewFields.authentication_rules,
-        pfConfigurationViewFields.administration_rules
+        pfConfigurationViewFields.authentication_rules(args),
+        pfConfigurationViewFields.administration_rules(args)
       ]
     case 'EAPTLS':
       return [
         pfConfigurationViewFields.id(args),
         pfConfigurationViewFields.description,
         pfConfigurationViewFields.realms(args),
-        pfConfigurationViewFields.authentication_rules,
-        pfConfigurationViewFields.administration_rules
+        pfConfigurationViewFields.authentication_rules(args),
+        pfConfigurationViewFields.administration_rules(args)
       ]
     case 'Htpasswd':
       return [
@@ -1806,8 +1844,8 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.description,
         pfConfigurationViewFields.path,
         pfConfigurationViewFields.realms(args),
-        pfConfigurationViewFields.authentication_rules,
-        pfConfigurationViewFields.administration_rules
+        pfConfigurationViewFields.authentication_rules(args),
+        pfConfigurationViewFields.administration_rules(args)
       ]
     case 'HTTP':
       return [
@@ -1827,8 +1865,8 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.host,
         pfConfigurationViewFields.authenticate_realm,
         pfConfigurationViewFields.realms(args),
-        pfConfigurationViewFields.authentication_rules,
-        pfConfigurationViewFields.administration_rules
+        pfConfigurationViewFields.authentication_rules(args),
+        pfConfigurationViewFields.administration_rules(args)
       ]
     case 'LDAP':
       return [
@@ -1848,8 +1886,8 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.monitor,
         pfConfigurationViewFields.shuffle,
         pfConfigurationViewFields.realms(args),
-        pfConfigurationViewFields.authentication_rules,
-        pfConfigurationViewFields.administration_rules
+        pfConfigurationViewFields.authentication_rules(args),
+        pfConfigurationViewFields.administration_rules(args)
       ]
     case 'POTD':
       return [
@@ -1859,8 +1897,8 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.password_email_update,
         pfConfigurationViewFields.password_length,
         pfConfigurationViewFields.realms(args),
-        pfConfigurationViewFields.authentication_rules,
-        pfConfigurationViewFields.administration_rules
+        pfConfigurationViewFields.authentication_rules(args),
+        pfConfigurationViewFields.administration_rules(args)
       ]
     case 'RADIUS':
       return [
@@ -1871,8 +1909,8 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.timeout,
         pfConfigurationViewFields.monitor,
         pfConfigurationViewFields.realms(args),
-        pfConfigurationViewFields.authentication_rules,
-        pfConfigurationViewFields.administration_rules
+        pfConfigurationViewFields.authentication_rules(args),
+        pfConfigurationViewFields.administration_rules(args)
       ]
     case 'SAML':
       return [
@@ -1896,7 +1934,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.activation_domain,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'Facebook':
       return [
@@ -1913,7 +1951,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.domains,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'Github':
       return [
@@ -1931,7 +1969,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.domains,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'Google':
       return [
@@ -1949,7 +1987,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.domains,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'Instagram':
       return [
@@ -1966,14 +2004,14 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.domains,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'Kickbox':
       return [
         pfConfigurationViewFields.id(args),
         pfConfigurationViewFields.description,
         pfConfigurationViewFields.api_key,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'LinkedIn':
       return [
@@ -1990,14 +2028,14 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.domains,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'Null':
       return [
         pfConfigurationViewFields.id(args),
         pfConfigurationViewFields.description,
         pfConfigurationViewFields.email_required,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'OpenID':
       return [
@@ -2014,7 +2052,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.domains,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'Pinterest':
       return [
@@ -2032,7 +2070,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.domains,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'SMS':
       return [
@@ -2044,7 +2082,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.pin_code_length,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'SponsorEmail':
       return [
@@ -2057,7 +2095,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.validate_sponsor,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'Twilio':
       return [
@@ -2070,7 +2108,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.pin_code_length,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'Twitter':
       return [
@@ -2084,7 +2122,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         Object.assign(pfConfigurationViewFields.protected_resource_url, { label: i18n.t('API URL of logged user') }), // re-label
         pfConfigurationViewFields.redirect_url,
         pfConfigurationViewFields.domains,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'WindowsLive':
       return [
@@ -2102,7 +2140,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.domains,
         pfConfigurationViewFields.create_local_account,
         pfConfigurationViewFields.local_account_logins,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'AdminProxy':
       return [
@@ -2111,7 +2149,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.proxy_addresses,
         pfConfigurationViewFields.user_header,
         pfConfigurationViewFields.group_header,
-        pfConfigurationViewFields.administration_rules
+        pfConfigurationViewFields.administration_rules(args)
       ]
     case 'Blackhole':
       return [
@@ -2131,7 +2169,7 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
         pfConfigurationViewFields.reject_realm(args),
         pfConfigurationViewFields.local_realm(args),
         pfConfigurationViewFields.monitor,
-        pfConfigurationViewFields.authentication_rules
+        pfConfigurationViewFields.authentication_rules(args)
       ]
     case 'AuthorizeNet':
       return [
@@ -2536,7 +2574,9 @@ export const pfConfigurationAuthenticationSourcesViewDefaults = (args = {}) => {
         scope: 'sub',
         usernameattribute: 'sAMAccountName',
         email_attribute: 'mail',
-        cache_match: '1'
+        cache_match: '1',
+        authentication_rules: [],
+        administration_rules: []
       }
     case 'HTTP':
       return {
@@ -2771,5 +2811,148 @@ export const pfConfigurationRealmViewDefaults = (args = {}) => {
 export const pfConfigurationRoleViewDefaults = (args = {}) => {
   return {
     id: null
+  }
+}
+
+export const pfConfigurationActions = {
+  set_access_duration: {
+    value: 'set_access_duration',
+    text: i18n.t('Access duration'),
+    types: [fieldType.DURATION],
+    validators: {
+      type: {
+        /* Require "set_role" */
+        [i18n.t('Action requires "Set Role".')]: requireAllSiblingFieldTypes('set_role'),
+        /* Restrict "set_unreg_date" */
+        [i18n.t('Action conflicts with "Unregistration date".')]: restrictAllSiblingFieldTypes('set_unreg_date'),
+        /* Don't allow elsewhere */
+        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+      },
+      value: {
+        [i18n.t('Value required.')]: required
+      }
+    }
+  },
+  set_access_level: {
+    value: 'set_access_level',
+    text: i18n.t('Access level'),
+    types: [fieldType.ADMINROLE],
+    validators: {
+      type: {
+        /* Don't allow elsewhere */
+        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+      },
+      value: {
+        [i18n.t('Value required.')]: required
+      }
+    }
+  },
+  set_bandwidth_balance: {
+    value: 'set_bandwidth_balance',
+    text: i18n.t('Bandwidth balance'),
+    types: [fieldType.PREFIXMULTIPLIER],
+    validators: {
+      type: {
+        /* Don't allow elsewhere */
+        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+      },
+      value: {
+        [i18n.t('Value required.')]: required,
+        [i18n.t('Value must be greater than {min}bytes.', { min: bytes.toHuman(schema.node.bandwidth_balance.min) })]: minValue(schema.node.bandwidth_balance.min),
+        [i18n.t('Value must be less than {max}bytes.', { max: bytes.toHuman(schema.node.bandwidth_balance.max) })]: maxValue(schema.node.bandwidth_balance.max)
+      }
+    }
+  },
+  mark_as_sponsor: {
+    value: 'mark_as_sponsor',
+    text: i18n.t('Mark as sponsor'),
+    types: [fieldType.NONE],
+    validators: {
+      type: {
+        /* Don't allow elsewhere */
+        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+      }
+    }
+  },
+  set_role: {
+    value: 'set_role',
+    text: i18n.t('Role'),
+    types: [fieldType.ROLE],
+    validators: {
+      type: {
+        /* When "Role" is selected, either "Time Balance" or "set_unreg_date" is required */
+        [i18n.t('Action requires either "Access duration" or "Unregistration date".')]: requireAnySiblingFieldTypes('set_access_duration', 'set_unreg_date'),
+        /* Don't allow elsewhere */
+        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+      },
+      value: {
+        [i18n.t('Value required.')]: required
+      }
+    }
+  },
+  set_role_by_name: {
+    value: 'set_role',
+    text: i18n.t('Role'),
+    types: [fieldType.ROLE_BY_NAME],
+    validators: {
+      type: {
+        /* When "Role" is selected, either "Time Balance" or "set_unreg_date" is required */
+        [i18n.t('Action requires either "Access duration" or "Unregistration date".')]: requireAnySiblingFieldTypes('set_access_duration', 'set_unreg_date'),
+        /* Don't allow elsewhere */
+        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+      },
+      value: {
+        [i18n.t('Value required.')]: required
+      }
+    }
+  },
+  set_tenant_id: {
+    value: 'set_tenant_id',
+    text: i18n.t('Tenant ID'),
+    types: [fieldType.TENANT],
+    validators: {
+      type: {
+        /* Don't allow elsewhere */
+        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+      },
+      value: {
+        [i18n.t('Value required.')]: required,
+        [i18n.t('Value must be numeric.')]: numeric
+      }
+    }
+  },
+  set_time_balance: {
+    value: 'set_time_balance',
+    text: i18n.t('Time balance'),
+    types: [fieldType.DURATION],
+    validators: {
+      type: {
+        /* Don't allow elsewhere */
+        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+      },
+      value: {
+        [i18n.t('Value required.')]: required
+      }
+    }
+  },
+  set_unreg_date: {
+    value: 'set_unreg_date',
+    text: i18n.t('Unregistration date'),
+    types: [fieldType.DATETIME],
+    moments: ['1 days', '1 weeks', '1 months', '1 years'],
+    validators: {
+      type: {
+        /* Require "set_role" */
+        [i18n.t('Action requires "Set Role".')]: requireAllSiblingFieldTypes('set_role'),
+        /* Restrict "set_access_duration" */
+        [i18n.t('Action conflicts with "Access duration".')]: restrictAllSiblingFieldTypes('set_access_duration'),
+        /* Don't allow elsewhere */
+        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+      },
+      value: {
+        [i18n.t('Future date required.')]: compareDate('>=', new Date(), schema.node.unregdate.format, false),
+        [i18n.t('Invalid date.')]: isDateFormat(schema.node.unregdate.format)
+      }
+    }
   }
 }
