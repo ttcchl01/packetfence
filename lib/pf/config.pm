@@ -165,6 +165,8 @@ our (
     %ConfigRoles,
 #device_Registration.conf
     %ConfigDeviceRegistration,
+# Radius sources
+    %ConfigAuthenticationRadius,
 );
 
 BEGIN {
