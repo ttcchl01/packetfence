@@ -7,7 +7,8 @@ import (
 )
 
 func MysqlInsert(key string, value string, db *sql.DB) bool {
-	_, err := db.Query("replace into key_value_storage values(?,?)", "/dhcpd/"+key, value)
+	rows, err := db.Query("replace into key_value_storage values(?,?)", "/dhcpd/"+key, value)
+	defer rows.Close()
 	if err != nil {
 		log.LoggerWContext(ctx).Error("Error while inserting into MySQL: " + err.Error())
 		return false
@@ -17,8 +18,8 @@ func MysqlInsert(key string, value string, db *sql.DB) bool {
 }
 
 func MysqlGet(key string, db *sql.DB) (string, string) {
-	row, err := db.Query("select id, value from key_value_storage where id = ?", "/dhcpd/"+key)
-	defer row.Close()
+	rows, err := db.Query("select id, value from key_value_storage where id = ?", "/dhcpd/"+key)
+	defer rows.Close()
 	if err != nil {
 		log.LoggerWContext(ctx).Debug("Error while getting MySQL '" + key + "': " + err.Error())
 		return "", ""
@@ -27,8 +28,8 @@ func MysqlGet(key string, db *sql.DB) (string, string) {
 		Id    string
 		Value string
 	)
-	for row.Next() {
-		err := row.Scan(&Id, &Value)
+	for rows.Next() {
+		err := rows.Scan(&Id, &Value)
 		if err != nil {
 			log.LoggerWContext(ctx).Crit(err.Error())
 		}
@@ -38,7 +39,8 @@ func MysqlGet(key string, db *sql.DB) (string, string) {
 }
 
 func MysqlDel(key string, db *sql.DB) bool {
-	_, err := db.Query("delete from key_value_storage where id = ?", "/dhcpd/"+key)
+	rows, err := db.Query("delete from key_value_storage where id = ?", "/dhcpd/"+key)
+	defer rows.Close()
 	if err != nil {
 		log.LoggerWContext(ctx).Error("Error while deleting MySQL key '" + key + "': " + err.Error())
 		return false
