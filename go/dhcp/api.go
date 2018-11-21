@@ -13,8 +13,10 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/goji/httpauth"
 	"github.com/gorilla/mux"
 	"github.com/inverse-inc/packetfence/go/api-frontend/unifiedapierrors"
+	"github.com/inverse-inc/packetfence/go/db"
 	"github.com/inverse-inc/packetfence/go/pfconfigdriver"
 	"github.com/inverse-inc/packetfence/go/sharedutils"
 	dhcp "github.com/krolaw/dhcp4"
@@ -67,7 +69,49 @@ type Info struct {
 	Network string `json:"network,omitempty"`
 }
 
-func (a *App) handleIP2Mac(res http.ResponseWriter, req *http.Request) {
+type Api struct {
+	Router *mux.Router
+	DB     *sql.DB
+}
+
+func (a *Api) Initialize(configDatabase pfconfigdriver.PfConfDatabase) {
+	var err error
+	a.DB, err = db.DbFromConfig(ctx)
+	a.DB.SetMaxIdleConns(0)
+	a.DB.SetMaxOpenConns(500)
+	sharedutils.CheckError(err)
+	a.Router = mux.NewRouter()
+	a.initializeRoutes()
+}
+
+func (a *Api) initializeRoutes() {
+
+	a.Router.HandleFunc("/api/v1/dhcp/mac/{mac:(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}}", a.handleMac2Ip).Methods("GET")
+	a.Router.HandleFunc("/api/v1/dhcp/mac/{mac:(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}}", a.handleReleaseIP).Methods("DELETE")
+	a.Router.HandleFunc("/api/v1/dhcp/ip/{ip:(?:[0-9]{1,3}.){3}(?:[0-9]{1,3})}", a.handleIP2Mac).Methods("GET")
+	a.Router.HandleFunc("/api/v1/dhcp/stats", a.handleAllStats).Methods("GET")
+	a.Router.HandleFunc("/api/v1/dhcp/stats/{int:.*}/{network:(?:[0-9]{1,3}.){3}(?:[0-9]{1,3})}", a.handleStats).Methods("GET")
+	a.Router.HandleFunc("/api/v1/dhcp/stats/{int:.*}", a.handleStats).Methods("GET")
+	a.Router.HandleFunc("/api/v1/dhcp/debug/{int:.*}/{role:(?:[^/]*)}", a.handleDebug).Methods("GET")
+	a.Router.HandleFunc("/api/v1/dhcp/options/network/{network:(?:[0-9]{1,3}.){3}(?:[0-9]{1,3})}", a.handleOverrideNetworkOptions).Methods("POST")
+	a.Router.HandleFunc("/api/v1/dhcp/options/network/{network:(?:[0-9]{1,3}.){3}(?:[0-9]{1,3})}", a.handleRemoveNetworkOptions).Methods("DELETE")
+	a.Router.HandleFunc("/api/v1/dhcp/options/mac/{mac:(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}}", a.handleOverrideOptions).Methods("POST")
+	a.Router.HandleFunc("/api/v1/dhcp/options/mac/{mac:(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}}", a.handleRemoveOptions).Methods("DELETE")
+	http.Handle("/", httpauth.SimpleBasicAuth(webservices.User, webservices.Pass)(a.Router))
+}
+
+func (a *Api) Run() {
+	srv := &http.Server{
+		Addr:         "127.0.0.1:22222",
+		IdleTimeout:  5 * time.Second,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		Handler:      a.Router,
+	}
+	srv.ListenAndServe()
+}
+
+func (a *Api) handleIP2Mac(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
 	if index, expiresAt, found := GlobalIpCache.GetWithExpiration(vars["ip"]); found {
@@ -87,7 +131,7 @@ func (a *App) handleIP2Mac(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func (a *App) handleMac2Ip(res http.ResponseWriter, req *http.Request) {
+func (a *Api) handleMac2Ip(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
 	if index, expiresAt, found := GlobalMacCache.GetWithExpiration(vars["mac"]); found {
@@ -107,7 +151,7 @@ func (a *App) handleMac2Ip(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func (a *App) handleAllStats(res http.ResponseWriter, req *http.Request) {
+func (a *Api) handleAllStats(res http.ResponseWriter, req *http.Request) {
 	var result Items
 	var interfaces pfconfigdriver.ListenInts
 	pfconfigdriver.FetchDecodeSocket(ctx, &interfaces)
@@ -136,7 +180,7 @@ func (a *App) handleAllStats(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func (a *App) handleStats(res http.ResponseWriter, req *http.Request) {
+func (a *Api) handleStats(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
 	if h, ok := intNametoInterface[vars["int"]]; ok {
@@ -157,7 +201,7 @@ func (a *App) handleStats(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func (a *App) handleDebug(res http.ResponseWriter, req *http.Request) {
+func (a *Api) handleDebug(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
 	if h, ok := intNametoInterface[vars["int"]]; ok {
@@ -177,7 +221,7 @@ func (a *App) handleDebug(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func (a *App) handleReleaseIP(res http.ResponseWriter, req *http.Request) {
+func (a *Api) handleReleaseIP(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	_ = InterfaceScopeFromMac(vars["mac"])
 
@@ -190,7 +234,7 @@ func (a *App) handleReleaseIP(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (a *App) handleOverrideOptions(res http.ResponseWriter, req *http.Request) {
+func (a *Api) handleOverrideOptions(res http.ResponseWriter, req *http.Request) {
 
 	vars := mux.Vars(req)
 
@@ -214,7 +258,7 @@ func (a *App) handleOverrideOptions(res http.ResponseWriter, req *http.Request) 
 	}
 }
 
-func (a *App) handleOverrideNetworkOptions(res http.ResponseWriter, req *http.Request) {
+func (a *Api) handleOverrideNetworkOptions(res http.ResponseWriter, req *http.Request) {
 
 	vars := mux.Vars(req)
 
@@ -238,7 +282,7 @@ func (a *App) handleOverrideNetworkOptions(res http.ResponseWriter, req *http.Re
 	}
 }
 
-func (a *App) handleRemoveOptions(res http.ResponseWriter, req *http.Request) {
+func (a *Api) handleRemoveOptions(res http.ResponseWriter, req *http.Request) {
 
 	vars := mux.Vars(req)
 
@@ -255,7 +299,7 @@ func (a *App) handleRemoveOptions(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (a *App) handleRemoveNetworkOptions(res http.ResponseWriter, req *http.Request) {
+func (a *Api) handleRemoveNetworkOptions(res http.ResponseWriter, req *http.Request) {
 
 	vars := mux.Vars(req)
 

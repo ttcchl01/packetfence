@@ -60,9 +60,8 @@ func newDHCPConfig() *Interfaces {
 }
 
 func (d *Interface) Initialize(configDatabase pfconfigdriver.PfConfDatabase) {
-	options := "timeout=90s&readTimeout=30s"
 	var err error
-	d.DB, err = db.DbFromConfig(ctx, options)
+	d.DB, err = db.DbFromConfig(ctx)
 	sharedutils.CheckError(err)
 }
 

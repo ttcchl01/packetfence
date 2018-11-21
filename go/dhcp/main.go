@@ -169,7 +169,7 @@ func main() {
 			time.Sleep(interval / 3)
 		}
 	}()
-	a := App{}
+	a := Api{}
 	a.Initialize(configDatabase)
 	a.Run()
 
