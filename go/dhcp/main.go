@@ -69,13 +69,6 @@ func main() {
 	pfconfigdriver.PfconfigPool.AddStruct(ctx, &pfconfigdriver.Config.PfConf.Database)
 	configDatabase := pfconfigdriver.Config.PfConf.Database
 
-	// Mysql connection for the configuration
-	connectDB(configDatabase)
-
-	MySQLdatabase.SetMaxIdleConns(0)
-	MySQLdatabase.SetMaxOpenConns(500)
-	// MySQLdatabase.SetConnMaxLifetime(time.Second * 5)
-
 	VIP = make(map[string]bool)
 	VIPIp = make(map[string]net.IP)
 

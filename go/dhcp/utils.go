@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/inverse-inc/packetfence/go/db"
 	"github.com/inverse-inc/packetfence/go/log"
 	"github.com/inverse-inc/packetfence/go/pfconfigdriver"
 	"github.com/inverse-inc/packetfence/go/sharedutils"
@@ -20,14 +19,6 @@ type NodeInfo struct {
 	Mac      string
 	Status   string
 	Category string
-}
-
-// connectDB connect to the database
-func connectDB(configDatabase pfconfigdriver.PfConfDatabase) {
-	options := "timeout=90s&readTimeout=30s"
-	db, err := db.DbFromConfig(ctx, options)
-	sharedutils.CheckError(err)
-	MySQLdatabase = db
 }
 
 // initiaLease fetch the database to remove already assigned ip addresses
