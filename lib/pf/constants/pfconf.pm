@@ -33,7 +33,7 @@ our %ALLOWED_SECTIONS = (
     snmp_traps        => undef,
     webservices       => undef,
     guests_admin_registration     => undef,
-    radius_authentication_methods => undef,
+    radius_configuration => undef,
 );
 
 =head1 AUTHOR
