@@ -226,7 +226,7 @@
               ></pf-form-prefix-multiplier>
 
             </b-col>
-            <b-col col class="text-center text-nowrap">
+            <b-col col class="text-center text-nowrap mr-1">
               <icon name="minus-circle" v-if="inputValue.length > 1" :class="['cursor-pointer mx-1', , { 'text-primary': ctrlKey, 'text-secondary': !ctrlKey }]" v-b-tooltip.hover.left.d300 :title="$t((ctrlKey) ? 'Delete All Actions' : 'Delete Action')" @click.native.stop.prevent="rowDel(index)"></icon>
               <icon name="plus-circle" :class="['cursor-pointer mx-1', , { 'text-primary': ctrlKey, 'text-secondary': !ctrlKey }]" v-b-tooltip.hover.left.d300 :title="$t((ctrlKey) ? 'Clone Action' : 'Add Action')" @click.native.stop.prevent="rowAdd(index + 1)"></icon>
             </b-col>
@@ -525,12 +525,10 @@ export default {
       if (this.drag) return
       this.emitExternalValidationsTimeout = setTimeout(() => {
         this.$emit('validations', this.getValidations())
-        if (this.validation && this.validation.$dirty) {
-          this.$nextTick(() => {
-            this.validation.$touch()
-          })
-        }
         this.$nextTick(() => {
+          if (this.validation && this.validation.$dirty) {
+            this.validation.$touch()
+          }
           // force DOM update
           this.$forceUpdate()
         })

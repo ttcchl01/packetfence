@@ -33,6 +33,7 @@ const {
   numeric,
   macAddress,
   ipAddress,
+  maxLength,
   minValue,
   maxValue
 } = require('vuelidate/lib/validators')
@@ -244,7 +245,7 @@ export const pfConfigurationViewFields = {
           },
           validators: {
             [i18n.t('Value required.')]: required,
-            [i18n.t('Alphanumeric value required.')]: alphaNum,
+            [i18n.t('Alphanumeric characters only.')]: alphaNum,
             [i18n.t('Source exists.')]: not(and(required, conditional(isNew || isClone), sourceExists))
           }
         }
@@ -323,7 +324,7 @@ export const pfConfigurationViewFields = {
       }
     ]
   },
-  administration_rules: ({ isNew = false, isClone = false } = {}) => {
+  administration_rules: ({ isNew = false, isClone = false, validation = {} } = {}) => {
     return {
       label: i18n.t('Administration Rules'),
       fields: [
@@ -336,7 +337,25 @@ export const pfConfigurationViewFields = {
               pfConfigurationActions.mark_as_sponsor,
               pfConfigurationActions.set_tenant_id
             ],
-            collapse: !isNew || isClone
+            collapse: !isNew || isClone,
+            invalidFeedback: [
+              { [i18n.t('Rule(s) contain one or more errors.')]: !('administration_rules' in validation && validation.administration_rules.anyError) }
+            ]
+          },
+          validators: {
+            $each: {
+              id: {
+                [i18n.t('Name required.')]: required,
+                [i18n.t('Alphanumeric characters only.')]: alphaNum,
+                [i18n.t('Maximum 255 characters.')]: maxLength(255)
+              },
+              description: {
+                [i18n.t('Maximum 255 characters.')]: maxLength(255)
+              },
+              match: {
+                [i18n.t('Match required.')]: required
+              }
+            }
           }
         }
       ]
@@ -439,7 +458,7 @@ export const pfConfigurationViewFields = {
       }
     ]
   },
-  authentication_rules: ({ isNew = false, isClone = false } = {}) => {
+  authentication_rules: ({ isNew = false, isClone = false, validation = {} } = {}) => {
     return {
       label: i18n.t('Authentication Rules'),
       fields: [
@@ -454,7 +473,25 @@ export const pfConfigurationViewFields = {
               pfConfigurationActions.set_time_balance,
               pfConfigurationActions.set_bandwidth_balance
             ],
-            collapse: !isNew || isClone
+            collapse: !isNew || isClone,
+            invalidFeedback: [
+              { [i18n.t('Rule(s) contain one or more errors.')]: !('authentication_rules' in validation && validation.authentication_rules.anyError) }
+            ]
+          },
+          validators: {
+            $each: {
+              id: {
+                [i18n.t('Name required.')]: required,
+                [i18n.t('Alphanumeric characters only.')]: alphaNum,
+                [i18n.t('Maximum 255 characters.')]: maxLength(255)
+              },
+              description: {
+                [i18n.t('Maximum 255 characters.')]: maxLength(255)
+              },
+              match: {
+                [i18n.t('Match required.')]: required
+              }
+            }
           }
         }
       ]
@@ -1929,7 +1966,9 @@ export const pfConfigurationAuthenticationSourcesViewFields = (args) => {
       return [
         pfConfigurationViewFields.id(args),
         pfConfigurationViewFields.description,
-        Object.assign(pfConfigurationViewFields.email_activation_timeout, { text: i18n.t('This is the delay given to a guest who registered by email confirmation to log into his email and click the activation link.') }), // re-text
+        Object.assign(pfConfigurationViewFields.email_activation_timeout, {
+          text: i18n.t('This is the delay given to a guest who registered by email confirmation to log into his email and click the activation link.')
+        }), // re-text
         pfConfigurationViewFields.allow_localdomain,
         pfConfigurationViewFields.activation_domain,
         pfConfigurationViewFields.create_local_account,
@@ -2258,7 +2297,7 @@ export const pfConfigurationDomainsViewFields = (args = {}) => {
           },
           validators: {
             [i18n.t('Name required.')]: required,
-            [i18n.t('Alphanumeric value required.')]: alphaNum
+            [i18n.t('Alphanumeric characters only.')]: alphaNum
           }
         }
       ]
@@ -2443,7 +2482,7 @@ export const pfConfigurationRealmViewFields = (args = {}) => {
           },
           validators: {
             [i18n.t('Realm required.')]: required,
-            [i18n.t('Alphanumeric value required.')]: alphaNum
+            [i18n.t('Alphanumeric characters only.')]: alphaNum
           }
         }
       ]
@@ -2499,7 +2538,8 @@ export const pfConfigurationRealmViewFields = (args = {}) => {
     },
     {
       label: i18n.t('Strip in RADIUS authorization'),
-      text: i18n.t('Should the usernames matching this realm be stripped when used in the authorization phase of 802.1x. Note that this doesn\'t control the stripping in FreeRADIUS, use the options above for that.'),
+      text: i18n.t('Should the usernames matching this realm be stripped when used in the authorization phase of 802.1x.' +
+        ' Note that this doesn\'t control the stripping in FreeRADIUS, use the options above for that.'),
       fields: [
         {
           key: 'radius_strip_username',
@@ -2527,7 +2567,7 @@ export const pfConfigurationRoleViewFields = (args = {}) => {
           },
           validators: {
             [i18n.t('Name required.')]: required,
-            [i18n.t('Alphanumeric value required.')]: alphaNum
+            [i18n.t('Alphanumeric characters only.')]: alphaNum
           }
         }
       ]
@@ -2826,7 +2866,7 @@ export const pfConfigurationActions = {
         /* Restrict "set_unreg_date" */
         [i18n.t('Action conflicts with "Unregistration date".')]: restrictAllSiblingFieldTypes('set_unreg_date'),
         /* Don't allow elsewhere */
-        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+        [i18n.t('Action already exists.')]: limitSiblingFieldTypes(0)
       },
       value: {
         [i18n.t('Value required.')]: required
@@ -2840,7 +2880,7 @@ export const pfConfigurationActions = {
     validators: {
       type: {
         /* Don't allow elsewhere */
-        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+        [i18n.t('Action already exists.')]: limitSiblingFieldTypes(0)
       },
       value: {
         [i18n.t('Value required.')]: required
@@ -2854,7 +2894,7 @@ export const pfConfigurationActions = {
     validators: {
       type: {
         /* Don't allow elsewhere */
-        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+        [i18n.t('Action already exists.')]: limitSiblingFieldTypes(0)
       },
       value: {
         [i18n.t('Value required.')]: required,
@@ -2870,7 +2910,7 @@ export const pfConfigurationActions = {
     validators: {
       type: {
         /* Don't allow elsewhere */
-        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+        [i18n.t('Action already exists.')]: limitSiblingFieldTypes(0)
       }
     }
   },
@@ -2883,7 +2923,7 @@ export const pfConfigurationActions = {
         /* When "Role" is selected, either "Time Balance" or "set_unreg_date" is required */
         [i18n.t('Action requires either "Access duration" or "Unregistration date".')]: requireAnySiblingFieldTypes('set_access_duration', 'set_unreg_date'),
         /* Don't allow elsewhere */
-        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+        [i18n.t('Action already exists.')]: limitSiblingFieldTypes(0)
       },
       value: {
         [i18n.t('Value required.')]: required
@@ -2899,7 +2939,7 @@ export const pfConfigurationActions = {
         /* When "Role" is selected, either "Time Balance" or "set_unreg_date" is required */
         [i18n.t('Action requires either "Access duration" or "Unregistration date".')]: requireAnySiblingFieldTypes('set_access_duration', 'set_unreg_date'),
         /* Don't allow elsewhere */
-        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+        [i18n.t('Action already exists.')]: limitSiblingFieldTypes(0)
       },
       value: {
         [i18n.t('Value required.')]: required
@@ -2913,7 +2953,7 @@ export const pfConfigurationActions = {
     validators: {
       type: {
         /* Don't allow elsewhere */
-        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+        [i18n.t('Action already exists.')]: limitSiblingFieldTypes(0)
       },
       value: {
         [i18n.t('Value required.')]: required,
@@ -2928,7 +2968,7 @@ export const pfConfigurationActions = {
     validators: {
       type: {
         /* Don't allow elsewhere */
-        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+        [i18n.t('Action already exists.')]: limitSiblingFieldTypes(0)
       },
       value: {
         [i18n.t('Value required.')]: required
@@ -2947,7 +2987,7 @@ export const pfConfigurationActions = {
         /* Restrict "set_access_duration" */
         [i18n.t('Action conflicts with "Access duration".')]: restrictAllSiblingFieldTypes('set_access_duration'),
         /* Don't allow elsewhere */
-        [i18n.t('Action exists.')]: limitSiblingFieldTypes(0)
+        [i18n.t('Action already exists.')]: limitSiblingFieldTypes(0)
       },
       value: {
         [i18n.t('Future date required.')]: compareDate('>=', new Date(), schema.node.unregdate.format, false),
