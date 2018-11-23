@@ -80,9 +80,9 @@
 <template>
   <b-form-group horizontal :label-cols="(columnLabel) ? labelCols : 0" :label="$t(columnLabel)"
     :state="isValid()" :invalid-feedback="getInvalidFeedback()"
-    class="sortablefields-element" :class="{ 'is-focus': drag, 'mb-0': !columnLabel }"
+    class="pf-form-actions" :class="{ 'is-focus': drag, 'mb-0': !columnLabel }"
     >
-    <b-input-group class="input-group-sortablefields">
+    <b-input-group class="pf-form-actions-input-group">
 
       <!--
          - Vacuum-up label click event.
@@ -109,7 +109,8 @@
             @mousemove="onMouseEnter(index)"
             no-gutter
           >
-            <b-col col v-if="sortable && hover === index && inputValue.length > 1" class="draghandle text-center"><icon name="th" v-b-tooltip.hover.left.d300 :title="$t('Click and drag to re-order')"></icon></b-col>
+            <b-col col v-if="sortable && hover === index && inputValue.length > 1" class="draghandle text-center"><icon name="th" v-b-tooltip.hover.left.d300 :title="$t('Click and drag to
+re-order')"></icon></b-col>
             <b-col col v-else class="dragindex text-center"><b-badge variant="light">{{ index + 1 }}</b-badge></b-col>
             <b-col cols="4" class="text-left py-1" align-self="start">
 
@@ -227,8 +228,10 @@
 
             </b-col>
             <b-col col class="text-center text-nowrap mr-1">
-              <icon name="minus-circle" v-if="inputValue.length > 1" :class="['cursor-pointer mx-1', , { 'text-primary': ctrlKey, 'text-secondary': !ctrlKey }]" v-b-tooltip.hover.left.d300 :title="$t((ctrlKey) ? 'Delete All Actions' : 'Delete Action')" @click.native.stop.prevent="rowDel(index)"></icon>
-              <icon name="plus-circle" :class="['cursor-pointer mx-1', , { 'text-primary': ctrlKey, 'text-secondary': !ctrlKey }]" v-b-tooltip.hover.left.d300 :title="$t((ctrlKey) ? 'Clone Action' : 'Add Action')" @click.native.stop.prevent="rowAdd(index + 1)"></icon>
+              <icon name="minus-circle" v-if="inputValue.length > 1" :class="['cursor-pointer mx-1', , { 'text-primary': ctrlKey, 'text-secondary': !ctrlKey }]" v-b-tooltip.hover.left.d300
+:title="$t((ctrlKey) ? 'Delete All Actions' : 'Delete Action')" @click.native.stop.prevent="rowDel(index)"></icon>
+              <icon name="plus-circle" :class="['cursor-pointer mx-1', , { 'text-primary': ctrlKey, 'text-secondary': !ctrlKey }]" v-b-tooltip.hover.left.d300 :title="$t((ctrlKey) ? 'Clone Action' :
+'Add Action')" @click.native.stop.prevent="rowAdd(index + 1)"></icon>
             </b-col>
           </b-form-row>
         </draggable>
@@ -552,21 +555,21 @@ export default {
 @import "../../node_modules/bootstrap/scss/mixins/transition";
 @import "../styles/variables";
 
-.sortablefields-element {
-  .input-group-sortablefields {
+.pf-form-actions {
+  .pf-form-actions-input-group {
     border: 1px solid $input-focus-bg;
     @include border-radius($border-radius);
     @include transition($custom-forms-transition);
     outline: 0;
   }
   &.is-focus {
-    .input-group-sortablefields {
+    .pf-form-actions-input-group {
       border-color: $input-focus-border-color;
       box-shadow: 0 0 0 $input-focus-width rgba($input-focus-border-color, .25);
     }
   }
   &.is-invalid {
-    .input-group-sortablefields {
+    .pf-form-actions-input-group {
       border-color: $form-feedback-invalid-color;
       box-shadow: 0 0 0 $input-focus-width rgba($form-feedback-invalid-color, .25);
     }
